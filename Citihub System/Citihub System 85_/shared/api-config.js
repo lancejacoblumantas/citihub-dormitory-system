@@ -1,5 +1,5 @@
 (function configureCitihubApiBase() {
     if (!window.CITIHUB_API_BASE_URL) {
-        window.CITIHUB_API_BASE_URL = "http://localhost:4000";
+        window.CITIHUB_API_BASE_URL = "https://citihub-backend.onrender.com";
     }
 })();
