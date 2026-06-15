@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="../js files/theme.js"></script>
+    <title>CitiHub - Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../css files/userprofile.css" />
+    <link rel="stylesheet" href="../css files/page-loader.css" />
+    <link rel="icon" type="image/png" href="../images/logo.png">
+      <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+      <script src="../js files/page-loader.js" defer></script>
+</head>
+<body data-loader-mode="manual">
+
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+  <div class="page-loading-box">
+    <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+    <div class="page-loading-spinner"></div>
+    <div class="page-loading-title">Loading your tenant profile</div>
+    <p class="page-loading-text">Please wait while we check your approval status and profile details.</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+      <img src="../images/logo.png" class="nav-brand-icon" alt="CitiHub Logo" />
+    <div>
+      <div class="nav-brand-text">CITIHUB DORMITORY</div>
+      <div class="nav-brand-sub"> 1st St, Santa Mesa, Manila, Metro Manila</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nav-greeting">
+      <div class="nav-greeting-top" id="welcome-logger"></div>
+      <div class="nav-greeting-room" id="navGreetingRoom">Awaiting room approval</div>
+    </div>
+   <div class="avatar-container" id="avatarContainer">
+  <div class="avatar" id="avatarBtn">CT</div>
+
+  <div class="avatar-dropdown" id="avatarDropdown">
+    <a href="#" class="dropdown-item active-item"> My Profile</a>
+    <div class="nav-divider"></div>
+    <a href="../pages/settings.html" class="dropdown-item"> Settings</a>
+    <div class="nav-divider"></div>
+    <a href="../pages/main.html" class="dropdown-item"> Dashboard</a>
+ 
+    <div class="nav-divider"></div>
+    <a href="#" class="dropdown-item" id="btnLogout"> Log Out</a>
+  </div>
+</div>
+  </div>
+</nav>
+
+<!-- BACK -->
+<div class="back-bar">
+    <button class="back-btn" onclick="window.location.href='../pages/main.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        Back to Dashboard
+    </button>
+</div>
+
+<!-- MAIN -->
+<div class="page">
+  <div class="page-title">My Profile</div>
+
+  <!-- HERO -->
+  <div class="profile-hero">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar" id="profileAvatarText">CT</div>
+      
+    </div>
+    <div class="profile-info">
+      <div class="profile-name" id="profile-name"></div>
+      <span class="profile-role">Student Tenant</span>
+      <div class="profile-meta">
+        <div class="profile-meta-item" >
+          <svg viewBox="0 0 24 24" fill="none"  stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span id="profile-email"></span>
+        </div>
+        <div class="profile-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.18 1.22 2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.06-1.06a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span id="profile-phone"></span></span>
+        </div>
+        <div class="profile-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+         <span id="profile-movein">Move-in schedule not yet available</span>
+        </div>
+      </div>
+    </div>
+    <div class="profile-status-badge">
+      <span class="status-dot"></span> Active Tenant
+    </div>
+  </div>
+
+  <!-- ROW 1 --> <!-- RESTRICTED AREA -->
+   <div class="locked-overlay-text">
+   Locked Content
+</div>
+<div id="restrictedWrapper">
+<div id="restrictedSection" style="position: relative;">
+  <div class="grid-2" id="extraSection">
+
+    <!-- PERSONAL INFO -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Personal Information
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label">First Name</div>
+          <div class="field-value" id="first-name"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Last Name</div>
+          <div class="field-value" id="last-name"></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label">Email Address</div>
+          <div class="field-value" id="email"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Phone Number</div>
+          <div class="field-value" id="phone"></div>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field">
+          <div class="field-label">Home Address</div>
+          <div class="field-value" id="address"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROOM INFO -->
+    <div class="card" id="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Room Details
+        </div>
+      </div>
+      <div class="room-detail-grid">
+        <div class="room-detail-item">
+          <div class="room-detail-val" id="room-number"></div>
+          <div class="room-detail-key">Room </div>
+        </div>
+        <div class="room-detail-item">
+          <div class="room-detail-val" id="room-type"></div>
+          <div class="room-detail-key">Room Type</div>
+        </div>
+        
+        <div class="room-detail-item">
+          <div class="room-detail-val" id="move-in-date"></div>
+          <div class="room-detail-key">Move-in Date</div>
+        </div>
+        <div class="room-detail-item">
+          <div class="room-detail-val" id="monthly-rate"></div>
+          <div class="room-detail-key">Monthly Rate</div>
+        </div>
+        <div class="room-detail-item">
+          <div class="room-detail-val" id="deposit-paid"></div>
+          <div class="room-detail-key">Deposit Paid</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="field-label" style="margin-bottom:8px;">Included Amenities</div>
+        <div class="amenity-tags">
+            <span class="amenity-tag"> Aircon</span>
+            <span class="amenity-tag"> WiFi</span>
+            <span class="amenity-tag"> Common CR</span>
+            <span class="amenity-tag"> Charging Station</span>
+            <span class="amenity-tag"> Dining table</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+ 
+  <!-- CENTER MESSAGE -->
+  
+
+  <!-- ROW 2 -->
+  <div class="grid-2">
+
+    <!-- EMERGENCY CONTACT -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          Emergency Contact
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label">Contact Name</div>
+          <div class="field-value" id="emergency-name"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Relationship</div>
+          <div class="field-value" id="emergency-relationship"></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label">Phone Number</div>
+          <div class="field-value" id="emergency-phone"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Alt. Number</div>
+          <div class="field-value" id="emergency-alt-phone"></div>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field">
+          <div class="field-label">Address</div>
+          <div class="field-value" id="emergency-address"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BILLING SUMMARY + ACCOUNT -->
+    <div id="billingSection" style="display:flex; flex-direction:column; gap:18px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Billing Summary
+          </div>
+        </div>
+        <div class="billing-row">
+          <span class="billing-label" id="billingPrimaryLabel">Current Billing</span>
+          <span class="billing-val pending" id="billingPrimaryValue">No billing records yet</span>
+        </div>
+        <div class="billing-row">
+          <span class="billing-label" id="billingSecondaryLabel">Latest Payment</span>
+          <span class="billing-val paid" id="billingSecondaryValue">No settled payment yet</span>
+        </div>
+        <div class="billing-row">
+          <span class="billing-label">Next Due Date</span>
+          <span class="billing-val" id="billingNextDueValue">Waiting for payment schedule</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            Account & Security
+          </div>
+        </div>
+        <p class="pw-hint">Keep your account secure by updating your password regularly.</p>
+        <button class="pw-btn"> Change Password</button>
+        <hr class="pw-divider"/>
+        <button class="logout-btn"> Log Out</button>
+      </div>
+    </div>
+
+  </div>
+  </div> <!-- .page -->
+</div>
+
+<div class="locked-message" id="locked-message">
+  <div class="locked-box">
+     You need to be approved<br>
+    <button onclick="window.location.href='main.html'" class="apply-btn">
+      Apply Now
+    </button>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</body>
+<script src="../js files/firebase-init.js"></script>
+<script src="../js files/userprofile.js"></script>
+
+</html>

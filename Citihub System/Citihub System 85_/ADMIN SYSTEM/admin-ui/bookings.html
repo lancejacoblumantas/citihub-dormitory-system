@@ -1,0 +1,489 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITIHUB - Online Bookings</title>
+    <link rel="stylesheet" href="../admin css files/bookings.css">
+    <link rel="stylesheet" href="../admin css files/admin-base.css">
+    <link rel="stylesheet" href="../admin css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+       <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../admin js/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0.85;
+            cursor: wait;
+        }
+
+        .btn-loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: btn-spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes btn-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="hidden-page" data-loader-mode="manual">
+
+    <div class="page-loading-overlay" id="pageLoadingOverlay">
+        <div class="page-loading-box">
+            <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+            <div class="page-loading-spinner"></div>
+            <div class="page-loading-title">Loading bookings</div>
+            <p class="page-loading-text">Please wait while we verify admin access and fetch booking requests.</p>
+        </div>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="../images/logo.png" class="sidebar-logo" alt="CitiHub Logo">
+            <div class="sidebar-brand-text">
+                <div class="sidebar-name">CITIHUB</div>
+                <div class="sidebar-role">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Main</div>
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">&#127968;</span> Dashboard</a>
+            <a href="tenants.html" class="nav-item"><span class="nav-icon">&#128101;</span> Tenants</a>
+            <a href="accounts.html" class="nav-item"><span class="nav-icon">&#128100;</span> Accounts</a>
+            <a href="bookings.html" class="nav-item active"><span class="nav-icon">&#128229;</span> Online Bookings <span class="nav-badge">2</span></a>
+            <a href="transient-beds.html" class="nav-item"><span class="nav-icon">&#127976;</span> Transient Beds <span class="nav-badge"></span></a>
+            <a href="transfer-requests.html" class="nav-item"><span class="nav-icon">&#8644;</span> Transfers</a>
+            <a href="rooms.html" class="nav-item"><span class="nav-icon">&#128719;</span> Rooms</a>
+            <a href="billing.html" class="nav-item"><span class="nav-icon">&#128179;</span> Billing <span class="nav-badge"></span></a>
+            
+            <a href="reports.html" class="nav-item"><span class="nav-icon">&#128202;</span> Reports</a>
+            <div class="nav-group-label">Communication</div>
+            <a href="bulletin.html" class="nav-item"><span class="nav-icon">&#128203;</span> Bulletin Board</a>
+            <a href="messages.html" class="nav-item"><span class="nav-icon">&#128172;</span> Messages <span class="nav-badge">3</span></a>
+            <a href="maintenance.html" class="nav-item"><span class="nav-icon">&#128295;</span> Maintenance</a>
+            <a href="complaints.html" class="nav-item"><span class="nav-icon">&#128680;</span> Complaints <span class="nav-badge"></span></a>
+            <div class="nav-group-label">System</div>
+            <a href="admin-history.html" class="nav-item"><span class="nav-icon">&#128338;</span> Admin History</a>
+            <a href="settings.html" class="nav-item"><span class="nav-icon">&#9881;&#65039;</span> Settings</a>
+            <a href="#" class="nav-item logout" id="btnLogout"><span class="nav-icon">&#8617;</span> Log Out</a>
+        </nav>
+    </aside>
+
+    <div class="main-wrap">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleAdminSidebar()">&#9776;</button>
+                <div class="topbar-title">Online Bookings</div>
+            </div>
+            <div class="topbar-right">
+               
+                <div class="admin-info">
+                    <div class="admin-welcome">Welcome, Admin</div>
+                    <div class="admin-role">Super Admin</div>
+                </div>
+                <div class="avatar-container">
+                    <div class="avatar">AD</div>
+                    <div class="avatar-dropdown">
+                        <a href="settings.html" class="dropdown-item">&#9881;&#65039; Settings</a>
+                        <a href="#" class="dropdown-item">&#128100; Profile</a>
+                        <a href="../admin-ui/adminlogin.html" class="dropdown-item">&#8617; Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page">
+                <div class="page-header">
+                    <div><h1 class="page-title">Online Bookings</h1><p class="page-sub">Review and manage room booking requests submitted online</p></div>
+                    <button class="download-btn" onclick="downloadReport('Bookings')">&#11015; Download PDF</button>
+                </div>
+                <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+                    <div class="stat-card"><div class="stat-icon amber">&#9203;</div><div class="stat-body"><div class="stat-label">Awaiting Review</div><div class="stat-value">2</div><div class="stat-note">Need action</div></div></div>
+                    <div class="stat-card"><div class="stat-icon teal">&#10004;</div><div class="stat-body"><div class="stat-label">Approved This Month</div><div class="stat-value">5</div><div class="stat-note" id="stat-date-approved"></div></div></div>
+                    <div class="stat-card"><div class="stat-icon red">&#10060;</div><div class="stat-body"><div class="stat-label">Rejected</div><div class="stat-value">1</div><div class="stat-note" id="stat-date-rejected"></div></div></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                    <div class="card-title">&#128229; All Booking Requests</div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <div class="search-bar"><span>&#128269;</span><input type="text" id="bookingSearch" placeholder="Search applicant, email, room..." class="search-input" oninput="filterBookings()"></div>
+                            <select class="filter-select" id="bookingFilter" onchange="filterBookings()">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="tenant_cancel_requested">Cancellation Requested</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <select class="filter-select" id="bookingTypeFilter" onchange="filterBookings()">
+                                <option value="all">All Room Types</option>
+                                <option value="standard">Standard</option>
+                                <option value="premium">Premium</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead><tr><th>Applicant</th><th>Room Type</th><th>Requested Space</th><th>Submitted</th><th>Reference</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="bookingTableBody">
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FULL APPLICATION REVIEW MODAL -->
+    <div id="bookingModal" class="bk-modal-overlay" onclick="handleOverlayClick(event)">
+        <div class="bk-modal-container" id="bkModalContainer">
+
+            <!-- Sticky Header -->
+            <div class="bk-modal-header">
+                <div class="bk-modal-header-left">
+                <div class="bk-modal-icon">&#128229;</div>
+                    <div>
+                        <div class="bk-modal-title">Booking Application Review</div>
+                    <div class="bk-modal-ref" id="bkRef">-</div>
+                    </div>
+                </div>
+                    <button class="bk-modal-close" onclick="closeBookingModal()">&times;</button>
+            </div>
+
+            <!-- Hero Banner -->
+            <div class="bk-hero" id="bkHero">
+                <div class="bk-hero-inner">
+                    <div class="bk-hero-avatar" id="bkAvatar"></div>
+                    <div class="bk-hero-info">
+                        <div class="bk-hero-name" id="bkName"></div>
+                        <div class="bk-hero-meta" id="bkMeta"></div>
+                    </div>
+                    <div class="bk-hero-right">
+                        <div id="bkStatusWrap"></div>
+                        <div class="bk-submitted-label" id="bkSubmittedLabel"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable body -->
+            <div class="bk-modal-body">
+
+            <!-- SECTION: Bedspace Booking -->
+                <div class="bk-section-card">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Bedspace Booking
+                        </div>
+                    </div>
+                    <div class="bk-summary-grid">
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Room Type</div>
+                            <div class="bk-summary-value" id="bkRoomTypeBadge"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Bedspace</div>
+                            <div class="bk-summary-value bk-highlight" id="bkBedspace"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Monthly Rate</div>
+                            <div class="bk-summary-value" id="bkRate"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Floor</div>
+                            <div class="bk-summary-value" id="bkFloor"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Gender Assignment</div>
+                            <div class="bk-summary-value" id="bkGender"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Preferred Move-in</div>
+                            <div class="bk-summary-value" id="bkPrefDate"></div>
+                        </div>
+                    </div>
+                    <div class="bk-cost-breakdown">
+                        <div class="bk-cost-title">Payment Breakdown</div>
+                        <div class="bk-cost-rows">
+                            <div class="bk-cost-row"><span>Monthly Rent</span><span id="bkCostRent"></span></div>
+                            <div class="bk-cost-row"><span>Required Down Payment</span><span id="bkCostDeposit"></span></div>
+                            <div class="bk-cost-row"><span>Selected Add-ons</span><span id="bkCostAdvance"></span></div>
+                            <div class="bk-cost-row bk-total-row"><span>First Checkout Total</span><span id="bkCostTotal"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- SECTION: Selected Add-ons -->
+                <div class="bk-section-card">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M1 12h22"/><path d="M5 5l14 14"/><path d="M19 5L5 19"/></svg>
+                            Selected Add-ons
+                        </div>
+                    </div>
+                    <div class="bk-addon-list" id="bkSelectedAddons"></div>
+                </div>
+
+            <!-- SECTION: Personal Information -->
+                <div class="bk-section-card">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            Personal Information
+                        </div>
+                    </div>
+                    <div class="bk-summary-grid">
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Full Name</div>
+                            <div class="bk-summary-value" id="bkFullName"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Email Address</div>
+                            <div class="bk-summary-value" id="bkEmail"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Phone Number</div>
+                            <div class="bk-summary-value" id="bkPhone"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Date of Birth</div>
+                            <div class="bk-summary-value" id="bkDob"></div>
+                        </div>
+                        <div class="bk-summary-item bk-full-span">
+                            <div class="bk-summary-label">Home Address</div>
+                            <div class="bk-summary-value" id="bkHomeAddr"></div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- SECTION: Emergency Contact -->
+                <div class="bk-section-card">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                            Emergency Contact
+                        </div>
+                    </div>
+                    <div class="bk-summary-grid">
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Contact Name</div>
+                            <div class="bk-summary-value" id="bkEcName"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Relationship</div>
+                            <div class="bk-summary-value" id="bkEcRel"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Phone Number</div>
+                            <div class="bk-summary-value" id="bkEcPhone"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Alternative Number</div>
+                            <div class="bk-summary-value bk-muted-val">Not provided</div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- SECTION: Applicant Type & Documents -->
+                <div class="bk-section-card">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Applicant Type &amp; Documents
+                        </div>
+                    </div>
+                    <div class="bk-applicant-summary">
+                        <div class="bk-applicant-chip">
+                                <span class="bk-chip-icon">&#127891;</span>
+                            <div>
+                                <div class="bk-chip-label">Applicant Type</div>
+                                <div class="bk-chip-value" id="bkAppType"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bk-doc-checklist" id="bkDocChecklist"></div>
+                </div>
+
+                <div class="bk-section-card" id="bkIdentityCard">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1l8 4v6c0 5-3.5 9.74-8 11-4.5-1.26-8-6-8-11V5l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+                            Identity Verification
+                        </div>
+                    </div>
+                    <div class="bk-summary-grid">
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Selfie Holding ID</div>
+                            <div class="bk-summary-value" id="bkIdentityUploadState"></div>
+                        </div>
+                        <div class="bk-summary-item">
+                            <div class="bk-summary-label">Current Review Status</div>
+                            <div class="bk-summary-value" id="bkIdentityStatusBadge"></div>
+                        </div>
+                        <div class="bk-summary-item bk-full-span">
+                            <div class="bk-summary-label">Last Review Update</div>
+                            <div class="bk-summary-value" id="bkIdentityReviewedMeta"></div>
+                        </div>
+                    </div>
+                    <div class="bk-decision-grid">
+                        <div class="bk-decision-block">
+                            <div class="bk-summary-label">Identity Review Status</div>
+                            <select id="bkIdentityStatus" class="bk-decision-select">
+                                <option value="pending_review">Pending Review</option>
+                                <option value="verified">Verified</option>
+                                <option value="needs_clearer_image">Needs Clearer Image</option>
+                                <option value="rejected_identity">Rejected Identity</option>
+                            </select>
+                        </div>
+                        <div class="bk-decision-block">
+                            <div class="bk-summary-label">Identity Review Note</div>
+                            <textarea
+                                id="bkIdentityNote"
+                                class="bk-decision-textarea"
+                                placeholder="Document why the ID submission is accepted, unclear, or rejected."
+                            ></textarea>
+                            <div class="bk-decision-note" id="bkIdentityDecisionNote">
+                                Mark identity as Verified before approving the booking request.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bk-section-card" id="bkDecisionCard">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9S3 16.97 3 12 7.03 3 12 3s9 4.03 9 9z"/></svg>
+                            Admin Decision
+                        </div>
+                    </div>
+                    <div class="bk-decision-grid">
+                        <div class="bk-decision-block">
+                            <div class="bk-summary-label">Rejection Reason</div>
+                            <textarea
+                                id="bkRejectionReason"
+                                class="bk-decision-textarea"
+                                placeholder="Enter the reason for rejecting this request."
+                            ></textarea>
+                            <div class="bk-decision-note" id="bkDecisionNote">
+                                This note is stored with the booking request for admin reference.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bk-section-card" id="bkCancellationCard">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+                            Booking Cancellation
+                        </div>
+                    </div>
+                    <div class="bk-decision-grid">
+                        <div class="bk-decision-block">
+                            <div class="bk-summary-label">Cancellation / Termination Reason</div>
+                            <textarea
+                                id="bkCancellationReason"
+                                class="bk-decision-textarea"
+                                placeholder="Enter the reason for cancelling or terminating this approved booking."
+                            ></textarea>
+                            <label class="bk-checkbox-row">
+                                <input type="checkbox" id="bkBlockFutureBooking">
+                                <span>Do not allow this tenant email/account to book another bedspace</span>
+                            </label>
+                            <div class="bk-decision-note" id="bkCancellationNote">
+                                This reason will be saved on the booking request and sent to the tenant as an admin notification.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- SECTION: Admin Actions (Pending only) -->
+                <div class="bk-section-card bk-next-steps-card" id="bkNextSteps">
+                    <div class="bk-section-header">
+                        <div class="bk-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Admin Review Steps
+                        </div>
+                    </div>
+                    <div class="bk-steps-timeline">
+                        <div class="bk-timeline-item">
+                            <div class="bk-timeline-icon tl-green">1</div>
+                            <div class="bk-timeline-content">
+                                <div class="bk-tl-title">Review Documents</div>
+                                <div class="bk-tl-desc">Verify all submitted files match the applicant type requirements and are legible.</div>
+                            </div>
+                        </div>
+                        <div class="bk-timeline-item">
+                            <div class="bk-timeline-icon tl-blue">2</div>
+                            <div class="bk-timeline-content">
+                                <div class="bk-tl-title">Approve or Reject</div>
+                                <div class="bk-tl-desc">Use the buttons below to approve and reserve the bedspace, or reject the application.</div>
+                            </div>
+                        </div>
+                        <div class="bk-timeline-item">
+                            <div class="bk-timeline-icon tl-orange">3</div>
+                            <div class="bk-timeline-content">
+                                <div class="bk-tl-title">Notify Applicant</div>
+                                <div class="bk-tl-desc">The applicant will be notified via email and phone upon your decision.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /bk-modal-body -->
+
+            <!-- Sticky Footer Actions -->
+            <div class="bk-modal-footer" id="bkModalFooter"></div>
+
+        </div>
+    </div>
+
+    <div id="bookingDeleteConfirm" class="bk-confirm-overlay">
+        <div class="bk-confirm-card" role="dialog" aria-modal="true" aria-labelledby="bkConfirmTitle">
+            <div class="bk-confirm-icon">&#9888;</div>
+            <div class="bk-confirm-title" id="bkConfirmTitle">Delete Booking Permanently?</div>
+            <div class="bk-confirm-text" id="bkConfirmText">
+                This will permanently remove the booking request and its uploaded documents from storage.
+            </div>
+            <label class="bk-checkbox-row bk-confirm-option" id="bkConfirmInvoiceOption" style="display:none;">
+                <input type="checkbox" id="bkConfirmDeleteInvoices">
+                <span>Also delete the billing invoices connected to this request</span>
+            </label>
+            <div class="bk-confirm-actions">
+                <button type="button" class="bk-footer-btn bk-btn-cancel" id="bkConfirmCancel">Keep Booking</button>
+                <button type="button" class="bk-footer-btn bk-btn-reject" id="bkConfirmDelete">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="../../shared/api-config.js"></script>
+    <script src="../admin js/firebase-init.js"></script>
+    <script src="../admin js/ui-feedback.js"></script>
+    <script src="../admin js/admin-auth.js"></script>
+    <script src="../admin js/admin-nav-badges.js"></script>
+    <script src="../admin js/admin-activity.js"></script>
+    <script src="../admin js/bookings.js"></script>
+</body>
+</html>
+

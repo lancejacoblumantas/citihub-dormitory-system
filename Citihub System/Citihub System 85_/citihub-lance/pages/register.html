@@ -1,0 +1,243 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citihub</title>
+    <link rel="stylesheet" href="../css files/register.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <script src="../js files/page-loader.js" defer></script>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+ <!-- Firebase core -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+
+<!-- Firebase products you need -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <style>
+    .toast {
+        position: fixed;
+        right: 28px;
+        bottom: 28px;
+        z-index: 9999;
+        max-width: min(360px, calc(100vw - 32px));
+        background: #111827;
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 12px 18px;
+        font-size: 14px;
+        line-height: 1.5;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 0.22s ease, transform 0.22s ease;
+        pointer-events: none;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+        .toast {
+            right: 16px;
+            left: 16px;
+            bottom: 16px;
+            max-width: none;
+        }
+    }
+
+    .btn-loading {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        opacity: 0.85;
+        cursor: wait;
+    }
+
+    .btn-loading-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: btn-spin 0.8s linear infinite;
+        flex-shrink: 0;
+    }
+
+    @keyframes btn-spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+  </style>
+
+
+    <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
+</head>
+<body>
+
+<div id="terms-modal" class="terms-modal" style="display:none;">
+    <div class="terms-modal-card">
+        <h2>Terms &amp; Privacy Consent</h2>
+
+        <div class="terms-modal-body">
+            <p>Welcome to <strong>CitiHub Dormitory</strong>. By proceeding, you agree to the following house rules and data privacy policies:</p>
+
+            <strong>I. DORMITORY HOUSE RULES</strong>
+            <ul>
+                <li><strong>Keep Doors Closed:</strong> Maintain privacy and security at all times.</li>
+                <li><strong>Visitor Policy:</strong> Visitors stay in designated common areas only; not allowed in tenant rooms.</li>
+                <li><strong>No Sharing of Beds:</strong> One bed space per registered resident only.</li>
+                <li><strong>Smoking:</strong> Strictly prohibited inside rooms or common spaces.</li>
+                <li><strong>Dress Code:</strong> Proper clothing or towel covering is required in shared spaces.</li>
+                <li><strong>Noise &amp; Conduct:</strong> No loud noises. Bullying, harassment, or foul words are strictly prohibited.</li>
+                <li><strong>No Hanging:</strong> Do not hang clothes in common areas to keep them orderly.</li>
+                <li><strong>Prohibited Substances:</strong> No alcohol, illegal drugs, or weapons. Violation results in immediate termination.</li>
+                <li><strong>No Personal Cooking:</strong> Not allowed inside rooms or common areas for fire safety.</li>
+                <li><strong>No Pets:</strong> Only CitiHub-approved pets are allowed.</li>
+                <li><strong>Allowed Appliances:</strong> Laptops, phones, and tablets only. High-wattage items are prohibited.</li>
+            </ul>
+
+            <hr>
+
+            <strong>II. DATA PRIVACY CONSENT (RA 10173)</strong>
+            <p>
+                We collect your personal information and residency requirements to process your application and send billing notifications.
+                Your data is stored securely in our database and handled according to the Data Privacy Act of 2012.
+            </p>
+        </div>
+
+        <button type="button" id="termsModalCloseBtn">I Understand &amp; Consent</button>
+    </div>
+</div>
+
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+    <div class="page-loading-box">
+        <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+        <div class="page-loading-spinner"></div>
+        <div class="page-loading-title">Opening registration</div>
+        <p class="page-loading-text">Please wait while we prepare the account creation form.</p>
+    </div>
+</div>
+   
+<form id="registerForm">
+
+<div class="wrapper">
+    <h2>Register</h2>
+
+    <div class="input-box">  
+        <box-icon type='solid' name='envelope'></box-icon>
+        <input type="email" name="email" id="newEmail" required placeholder="Email" autocomplete="email">
+    </div>
+
+    <p id="emailPara" class="email-paragraph"></p>
+
+    <div class="input-box">
+        <box-icon type='solid' name='user'></box-icon>
+        <input type="text" name="newName" id="username" required placeholder="Username" autocomplete="username" maxlength="30">
+    </div>
+
+    <p id="new-user" class="new-user-para"></p>
+
+    <div class="gender-selection">
+        <div class="gender-options">
+
+            <div class="radio-option">
+                <input type="radio" id="male" name="gender" value="male" required>
+                <label for="male">Male</label>
+            </div>
+
+            <div class="radio-option">
+                <input type="radio" id="female" name="gender" value="female" required>
+                <label for="female">Female</label>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="input-box">   
+        <box-icon type='solid' name='lock-alt' class="imgLock" title="Show Password" id="logoPassword" onclick="togglePasswordVisibility()"></box-icon>
+        <input type="password" id="loginPassword" name="password" placeholder="Password" required maxlength="16">
+    </div>
+
+    <div class="input-box">   
+        <box-icon type='solid' name='lock-alt' class="imgConLock" title="Show Password" id="logoConPassword" onclick="toggleConfirmPasswordVisibility()"></box-icon>
+        <input type="password" id="confirmPassword" name="confirmpassword" placeholder="Confirm Password" required maxlength="15">
+    </div>
+
+    <p id="confirm-pass-para" class="confirm-pass-para"></p>
+
+    <div class="g-recaptcha" data-sitekey="6LfdIaopAAAAAInMdxYUSveOrk5-FCDRBBoaNC2x"></div>
+
+    <p class="not-robot-para" id="not-robot-para">Please verify that you are not a Robot.</p>
+
+    <div class="chckTermsdiv">
+        <input type="checkbox" id="termsCheckbox" name="terms" required>
+        <label for="termsCheckbox">
+            I agree to the <a href="#" id="openTermsLink">Terms and Conditions</a>
+        </label>
+    </div>
+
+    <p class="terms-para" id="terms-para">Please agree to the Terms and Conditions.</p>
+
+    <button type="submit" class="btnCreateAccount" id="btnCreateAccount">
+        Create Account
+    </button>
+    <a href="homepage.html" class="btnHomePage">Go to Homepage</a>
+  <button id="googleSignInBtn" class="google-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
+    <span>Sign up with Google</span>
+</button>
+    <div class="log-in-link">
+        <p>Already have an account? <a href="intro.html">Log In</a></p>
+    </div>
+
+</div>
+    
+</form>
+   <div id="completeProfileModal" class="modal">
+  <div class="modal-content">
+
+    <h2>Complete Profile</h2>
+
+    <div class="gender-options">
+        <div class="radio-option">
+            <input type="radio" name="modalGender" value="Male" id="modal-male">
+            <label for="modal-male">Male</label>
+        </div>
+
+        <div class="radio-option">
+            <input type="radio" name="modalGender" value="Female" id="modal-female">
+            <label for="modal-female">Female</label>
+        </div>
+    </div>
+
+   <div class="terms-container">
+    <input type="checkbox" id="modalTerms">
+    <label for="modalTerms">I accept <a href="#" id="openModalTermsLink">Terms &amp; Conditions</a></label>
+</div>
+
+    <button id="saveProfileBtn">Continue</button>
+
+</div>
+</div>
+<div id="verifyEmailModal" class="modal">
+  <div class="modal-content">
+    <h2>Verify Your Email Address</h2>
+    <p style="font-size:14px; line-height:1.7; margin-top:10px; color:#374151;">
+      Your account has been created successfully. Before signing in, please verify your email address by opening the verification message we sent to your inbox and following the confirmation link.
+    </p>
+    <button id="continueToLoginBtn">Return to Login</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="../js files/firebase-init.js"></script>
+    <script src="../js files/register.js"></script>
+    </body>
+ 
+</html>

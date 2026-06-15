@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js files/theme.js"></script>
+    <title>Payments &amp; Billing - CITIHUB DORMITORY</title>
+    <link rel="stylesheet" href="../css files/payment.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../js files/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+<body data-loader-mode="manual">
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+    <div class="page-loading-box">
+        <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+        <div class="page-loading-spinner"></div>
+        <div class="page-loading-title">Preparing your billing page</div>
+        <p class="page-loading-text">Please wait while we load your approved tenant account and temporary billing summary.</p>
+    </div>
+</div>
+
+<header>
+    <div class="logo">
+        <img src="../images/logo.png" class="logo-icon" alt="CitiHub Logo">
+        <div class="logo-text">
+            <div class="name">CITIHUB DORMITORY</div>
+            <div class="address">&#128205; 1st St, Santa Mesa, Manila, Metro Manila</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <div class="welcome" id="welcomeLogger">Loading...</div>
+            <div class="room" id="userRoomText">Loading room...</div>
+        </div>
+        <div class="avatar-container" id="avatarContainer">
+            <div class="avatar" id="avatarBtn">U</div>
+            <div class="avatar-dropdown">
+                <a href="../pages/payment.html" class="dropdown-item active-item" data-action="payment">Payments</a>
+                <a href="../pages/main.html" class="dropdown-item" data-action="dashboard">Dashboard</a>
+                <a href="../pages/settings.html" class="dropdown-item" data-action="settings">Settings</a>
+                <a href="../pages/userprofile.html" class="dropdown-item" data-action="profile">Profile</a>
+                <a href="#" class="dropdown-item" data-action="logout">Log Out</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="breadcrumb">
+        <a href="../pages/main.html" class="bc-link">&#127968; Home</a>
+        <span class="bc-sep">&rsaquo;</span>
+        <span class="bc-current">Payments &amp; Billing</span>
+    </div>
+
+    <section class="hero-card">
+        <div>
+            <div class="hero-eyebrow">Approved Booking Payment</div>
+            <h1 class="hero-title" id="paymentHeroTitle">Tenant Billing Checkout</h1>
+            <p class="hero-sub" id="paymentHeroSub">Approved tenants can settle the required PHP 1,000.00 down payment first, then continue with monthly rent payments based on the approved move-in date using GCash, Maya, Card, GrabPay, ShopeePay, QR Ph, Online Banking, or BillEase.</p>
+        </div>
+        <div class="hero-actions">
+            <button class="hero-btn primary" id="payCurrentBtn" type="button">&#128179; Continue to Payment</button>
+            <button class="hero-btn secondary" id="downloadStatementBtn" type="button">Download Billing Summary</button>
+        </div>
+    </section>
+
+    <section class="payment-method-summary">
+        <div class="payment-method-current">
+            <div class="method-icon" id="currentMethodIcon">&#128179;</div>
+            <div>
+                <div class="summary-label">Payment Method</div>
+                <div class="payment-method-name" id="currentMethodName">GCash</div>
+                <div class="summary-sub" id="selectedMethodNote">Selected method: GCash</div>
+            </div>
+        </div>
+        <button type="button" class="change-method-btn" id="changeMethodBtn">Change Payment Method</button>
+    </section>
+
+    <section class="summary-grid">
+        <article class="summary-card emphasis">
+            <div class="summary-label">Required Down Payment</div>
+            <div class="summary-value" id="outstandingAmount">PHP 1,000.00</div>
+            <div class="summary-calculation" id="outstandingCalculation"></div>
+            <div class="summary-sub" id="currentDueText">Required before move-in scheduling can proceed.</div>
+        </article>
+        <article class="summary-card">
+            <div class="summary-label" id="statusSummaryLabel">Payment Status</div>
+            <div class="summary-value" id="nextDueDate">Unpaid</div>
+            <div class="summary-sub" id="paymentStatusSub">Waiting for your first payment method selection.</div>
+        </article>
+        <article class="summary-card">
+            <div class="summary-label">Approved Room Plan</div>
+            <div class="summary-value" id="currentPlan">Pending</div>
+            <div class="summary-sub" id="planSub">Your room and approved booking details will appear here once loaded.</div>
+        </article>
+    </section>
+
+    <section class="content-grid">
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                        <div class="panel-title">Current Billing Summary</div>
+                        <div class="panel-sub" id="currentBillingPanelSub">Current approved-tenant billing requirement before gateway handoff.</div>
+                    </div>
+                    <span class="panel-badge pending" id="billingStageBadge">Required</span>
+                </div>
+                <div class="bill-list" id="currentBillsList"></div>
+            </div>
+
+        <div class="stack">
+            <div class="panel" id="addonsPanel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Manage Add-ons</div>
+                        <div class="panel-sub" id="addonsPanelSub">Add or cancel monthly services. Changes apply to the next unpaid billing cycle.</div>
+                    </div>
+                    <span class="panel-badge pending" id="addonsPanelBadge">Loading</span>
+                </div>
+                <div class="addons-layout">
+                    <div>
+                        <div class="addons-section-label">Service Options</div>
+                        <div class="addons-list" id="addonsCatalogList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Need Help?</div>
+                        <div class="panel-sub">Reach out if your approved booking is not showing or if you need billing help.</div>
+                    </div>
+                </div>
+                <div class="support-box">
+                    <p>Your approved booking should show one required down payment first. If the amount or status looks incorrect, contact the admin team before continuing.</p>
+                    <button class="hero-btn secondary full-width" id="askAdminBtn" type="button">Message Admin for Billing Help</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel history-panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">Recent Payment Activity</div>
+                <div class="panel-sub">Your selected method and payment request status will appear here.</div>
+            </div>
+        </div>
+        <div class="history-list" id="paymentHistoryList"></div>
+    </section>
+
+    <section class="panel history-panel monthly-panel" id="monthlyBillingPanel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">Monthly Billing Schedule</div>
+                <div class="panel-sub" id="monthlyBillingSub">Your recurring monthly billing will appear here after the required down payment is confirmed.</div>
+            </div>
+            <span class="panel-badge pending" id="monthlyBillingBadge">Locked</span>
+        </div>
+        <div class="monthly-billing-summary" id="monthlyBillingSummary"></div>
+        <div class="history-list" id="monthlyBillingList"></div>
+    </section>
+</main>
+
+<div class="method-modal-overlay" id="methodModal" aria-hidden="true">
+    <div class="method-modal" role="dialog" aria-modal="true" aria-labelledby="methodModalTitle">
+        <div class="method-modal-header">
+            <div>
+                <div class="panel-title" id="methodModalTitle">Choose Payment Method</div>
+                <div class="panel-sub">Select one payment channel for your current bill.</div>
+            </div>
+            <button type="button" class="method-modal-close" id="methodModalClose" aria-label="Close payment method popup">&times;</button>
+        </div>
+        <div class="method-list" id="paymentMethodList">
+            <button class="method-card active" type="button" data-method="gcash">
+                <div class="method-icon">&#128179;</div>
+                <div>
+                    <div class="method-name">GCash</div>
+                    <div class="method-desc">Recommended for quick mobile down payments.</div>
+                </div>
+                <span class="method-tag">Selected</span>
+            </button>
+            <button class="method-card" type="button" data-method="maya">
+                <div class="method-icon">&#128181;</div>
+                <div>
+                    <div class="method-name">Maya</div>
+                    <div class="method-desc">Use Maya wallet or linked Maya payment options.</div>
+                </div>
+                <span class="method-tag">Select</span>
+            </button>
+            <button class="method-card" type="button" data-method="card">
+                <div class="method-icon">&#128179;</div>
+                <div>
+                    <div class="method-name">Card</div>
+                    <div class="method-desc">Debit or credit card checkout through the final gateway flow.</div>
+                </div>
+                <span class="method-tag">Select</span>
+            </button>
+            <button class="method-card" type="button" data-method="grab_pay">
+                <div class="method-icon">&#128241;</div>
+                <div>
+                    <div class="method-name">GrabPay</div>
+                    <div class="method-desc">Pay through your GrabPay wallet on the hosted checkout page.</div>
+                </div>
+                <span class="method-tag">Select</span>
+            </button>
+            <button class="method-card" type="button" data-method="shopee_pay">
+                <div class="method-icon">&#128717;</div>
+                <div>
+                    <div class="method-name">ShopeePay</div>
+                    <div class="method-desc">Pay using ShopeePay when it is enabled on your PayMongo account.</div>
+                </div>
+                <span class="method-tag">Select</span>
+            </button>
+            <button class="method-card" type="button" data-method="qrph">
+                <div class="method-icon">&#9638;</div>
+                <div>
+                    <div class="method-name">QR Ph</div>
+                    <div class="method-desc">Scan with supported banking and e-wallet apps, including QR Ph-enabled wallets.</div>
+                </div>
+                <span class="method-tag">Select</span>
+            </button>
+            <button class="method-card" type="button" data-method="online_banking">
+                <div class="method-icon">&#127974;</div>
+                <div>
+                    <div class="method-name">Online Banking</div>
+                    <div class="method-desc">Use supported banks such as BPI, UnionBank, BDO, Metrobank, or Landbank.</div>
+                </div>
+                <span class="method-tag">Select</span>
+            </button>
+            <button class="method-card" type="button" data-method="billease">
+                <div class="method-icon">&#128176;</div>
+                <div>
+                    <div class="method-name">BillEase</div>
+                    <div class="method-desc">Use PayMongo's available buy-now-pay-later checkout option.</div>
+                </div>
+                <span class="method-tag">Select</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="method-modal-overlay" id="billingPasswordModal" aria-hidden="true">
+    <div class="method-modal password-modal" role="dialog" aria-modal="true" aria-labelledby="billingPasswordModalTitle">
+        <div class="method-modal-header">
+            <div>
+                <div class="panel-title" id="billingPasswordModalTitle">Protect Billing Summary</div>
+                <div class="panel-sub">Create a password that will be required when opening the downloaded PDF.</div>
+            </div>
+            <button type="button" class="method-modal-close" id="billingPasswordModalClose" aria-label="Close password popup">&times;</button>
+        </div>
+        <form class="password-modal-body" id="billingPasswordForm">
+            <label class="password-field-label" for="billingPdfPassword">PDF Password</label>
+            <input class="password-field" id="billingPdfPassword" name="billingPdfPassword" type="password" minlength="4" autocomplete="new-password" required>
+            <label class="password-field-label" for="billingPdfPasswordConfirm">Confirm Password</label>
+            <input class="password-field" id="billingPdfPasswordConfirm" name="billingPdfPasswordConfirm" type="password" minlength="4" autocomplete="new-password" required>
+            <div class="password-modal-note" id="billingPasswordNote">Use at least 4 characters. Keep this password safe because CitiHub cannot recover it from the PDF.</div>
+            <div class="password-modal-actions">
+                <button class="hero-btn password-cancel-btn" id="billingPasswordCancel" type="button">Cancel</button>
+                <button class="hero-btn primary password-submit-btn" type="submit">Download Protected PDF</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../../shared/api-config.js"></script>
+<script src="../js files/firebase-init.js"></script>
+<script src="../js files/payment.js"></script>
+</body>
+</html>

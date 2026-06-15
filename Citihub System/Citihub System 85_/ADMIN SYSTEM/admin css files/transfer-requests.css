@@ -1,0 +1,151 @@
+.transfer-route {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.transfer-sub {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.transfer-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.transfer-export-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.status-pill.pending_admin,
+.status-pill.approved_pending_payment {
+    background: var(--amber-bg);
+    color: #92400e;
+}
+
+.status-pill.completed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-pill.rejected {
+    background: var(--red-bg);
+    color: #b91c1c;
+}
+
+.hidden-page {
+    visibility: hidden;
+}
+
+.transfer-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+    z-index: 10020;
+}
+
+.transfer-confirm-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.transfer-confirm-card {
+    width: min(100%, 440px);
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: 0 22px 50px rgba(15, 23, 42, 0.22);
+    padding: 24px;
+}
+
+.transfer-confirm-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--red-bg);
+    color: #dc2626;
+    font-size: 24px;
+    margin-bottom: 14px;
+}
+
+.transfer-confirm-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.transfer-confirm-text {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-muted);
+}
+
+.transfer-confirm-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    margin-top: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text);
+}
+
+.transfer-confirm-option input {
+    width: 16px;
+    height: 16px;
+    margin-top: 1px;
+    accent-color: #dc2626;
+    flex-shrink: 0;
+}
+
+.transfer-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+@media (max-width: 600px) {
+    .transfer-export-actions {
+        width: 100%;
+    }
+
+    .transfer-export-actions .download-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .transfer-confirm-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .transfer-confirm-actions {
+        flex-direction: column-reverse;
+    }
+
+    .transfer-confirm-actions .tbl-btn {
+        width: 100%;
+    }
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js files/theme.js"></script>
+    <title>Report Concern - CITIHUB DORMITORY</title>
+    <link rel="stylesheet" href="../css files/complaints.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../js files/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+<body data-loader-mode="manual">
+    <div class="page-loading-overlay" id="pageLoadingOverlay">
+        <div class="page-loading-box">
+            <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+            <div class="page-loading-spinner"></div>
+            <div class="page-loading-title">Loading report center</div>
+            <p class="page-loading-text">Please wait while we verify your tenant access.</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <img src="../images/logo.png" class="logo-icon" alt="CitiHub Logo">
+            <div class="logo-text">
+                <div class="name">CITIHUB DORMITORY</div>
+                <div class="address">Tenant safety and conduct reports</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="main.html" class="back-btn">Back to Dashboard</a>
+            <div class="avatar" id="complaintAvatar">CT</div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div>
+                <div class="eyebrow">Approved tenants only</div>
+                <h1>Report Co-tenant Concern</h1>
+                <p>Submit a formal report if you witness a dormitory rule violation, unsafe behavior, harassment, prohibited items, or other suspicious activity.</p>
+            </div>
+            <div class="penalty-card">
+                <span>Guideline action</span>
+                <strong>Warning, memo, penalty, or termination review</strong>
+            </div>
+        </section>
+
+        <div class="locked-card" id="lockedCard" style="display:none;">
+            This report form is available only after your booking has been approved.
+        </div>
+
+        <section class="complaint-layout" id="complaintLayout">
+            <form class="report-panel" id="complaintForm">
+                <div class="panel-head">
+                    <div>
+                        <h2>New Report</h2>
+                        <p>Include what happened, where it happened, and who was involved if known.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <label class="field full">
+                        <span>Guideline Category</span>
+                        <select id="complaintCategory" required>
+                            <option value="unauthorized_visit">Visiting another tenant's room</option>
+                            <option value="vacant_bed_or_locker">Using vacant beds or lockers</option>
+                            <option value="blocked_hallway">Blocking hallway or passage</option>
+                            <option value="smoking">Smoking outside designated area</option>
+                            <option value="inappropriate_clothing">Improper clothing in shared space</option>
+                            <option value="unauthorized_visitor">Unauthorized visitor inside dormitory</option>
+                            <option value="hanging_items">Hanging clothes/items in shared spaces</option>
+                            <option value="loud_noise">Loud noise or disturbance</option>
+                            <option value="bullying_harassment">Bullying, harassment, discrimination, or foul words</option>
+                            <option value="alcohol">Alcohol possession or drinking</option>
+                            <option value="drugs_weapons_fighting">Drugs, weapons, gambling, or fighting</option>
+                            <option value="cooking">Cooking or fire safety violation</option>
+                            <option value="washing_clothes">Washing clothes/items inside dormitory</option>
+                            <option value="pets">Unauthorized pet</option>
+                            <option value="sanitation_pests">Sanitation, trash, food, or pest concern</option>
+                            <option value="barangay_ordinance">Barangay ordinance violation</option>
+                            <option value="public_scandal">Public scandal or disturbance</option>
+                            <option value="other">Other suspicious behavior</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Reported Tenant Name</span>
+                        <input type="text" id="reportedTenantName" maxlength="120" placeholder="Name if known">
+                    </label>
+                    <label class="field">
+                        <span>Room or Area</span>
+                        <input type="text" id="reportedTenantRoom" maxlength="60" placeholder="Example: Room A1 or hallway">
+                    </label>
+                    <label class="field">
+                        <span>Bedspace</span>
+                        <input type="text" id="reportedTenantBed" maxlength="60" placeholder="Optional">
+                    </label>
+                    <label class="field">
+                        <span>Subject</span>
+                        <input type="text" id="complaintSubject" maxlength="120" placeholder="Short title for the report" required>
+                    </label>
+                    <label class="field full">
+                        <span>Details</span>
+                        <textarea id="complaintDescription" maxlength="1200" rows="7" placeholder="Describe what you saw, the date/time if remembered, and why it needs admin attention." required></textarea>
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button class="submit-btn" id="submitComplaintBtn" type="submit">Submit Report</button>
+                </div>
+            </form>
+
+            <aside class="history-panel">
+                <div class="panel-head compact">
+                    <div>
+                        <h2>Your Reports</h2>
+                        <p>Status updates from the admin team.</p>
+                    </div>
+                </div>
+                <div class="report-list" id="complaintHistory">
+                    <div class="empty-state">No reports submitted yet.</div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <script src="../../shared/api-config.js"></script>
+    <script src="../js files/firebase-init.js"></script>
+    <script src="../js files/complaints.js"></script>
+</body>
+</html>

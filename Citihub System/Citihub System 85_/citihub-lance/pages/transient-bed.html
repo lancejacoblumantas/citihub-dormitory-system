@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js files/theme.js"></script>
+    <title>Transient Bed - CITIHUB DORMITORY</title>
+    <link rel="stylesheet" href="../css files/transient-bed.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../js files/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+<body data-loader-mode="manual">
+    <div class="page-loading-overlay" id="pageLoadingOverlay">
+        <div class="page-loading-box">
+            <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+            <div class="page-loading-spinner"></div>
+            <div class="page-loading-title">Loading Transient Bed</div>
+            <p class="page-loading-text">Please wait while we prepare available bedspaces and daily rates.</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <img src="../images/logo.png" class="logo-icon" alt="CitiHub Logo">
+            <div class="logo-text">
+                <div class="name">CITIHUB DORMITORY</div>
+                <div class="address">Transient Bed daily stay</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="main.html" class="back-btn">Back to Dashboard</a>
+            <div class="avatar" id="transientAvatar">CT</div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div>
+                <div class="hero-kicker">Short stay bedspace request</div>
+                <h1>Transient Bed</h1>
+                <p>Book a bedspace for one day or more. Standard beds are PHP 250 per day, Premium beds are PHP 500 per day.</p>
+                <div class="hero-points">
+                    <span>Admin approval required</span>
+                    <span>Payment after approval</span>
+                    <span>Uses regular CitiHub bedspaces</span>
+                </div>
+            </div>
+            <div class="rate-strip">
+                <div><span>Standard</span><strong>PHP 250/day</strong></div>
+                <div><span>Premium</span><strong>PHP 500/day</strong></div>
+            </div>
+        </section>
+
+        <section class="details-grid">
+            <article class="detail-card">
+                <div class="detail-icon">&#128719;</div>
+                <div>
+                    <h2>Shared Bedspace Stay</h2>
+                    <p>Transient guests choose from the same available rooms and bedspaces used for monthly booking, filtered by your profile gender.</p>
+                </div>
+            </article>
+            <article class="detail-card">
+                <div class="detail-icon">&#128179;</div>
+                <div>
+                    <h2>Pay Only When Approved</h2>
+                    <p>No payment is collected on this page. Once admin approves your request, the bill opens in the payment page with your preferred method.</p>
+                </div>
+            </article>
+            <article class="detail-card">
+                <div class="detail-icon">&#128221;</div>
+                <div>
+                    <h2>Information Required</h2>
+                    <p>After selecting a bedspace, you will complete the same personal information and document step used for booking requests.</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="booking-shell">
+            <div class="booking-panel">
+                <div class="panel-heading-row">
+                    <div>
+                        <div class="panel-title">Stay Details</div>
+                        <div class="panel-sub">Choose the room type and dates for this request.</div>
+                    </div>
+                    <div class="mini-badge">Daily Rate</div>
+                </div>
+                <div class="form-grid">
+                    <label class="field">
+                        <span>Room Type</span>
+                        <select id="roomType">
+                            <option value="standard">Standard - PHP 250/day</option>
+                            <option value="premium">Premium - PHP 500/day</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>Check-in Date</span>
+                        <input type="date" id="checkInDate">
+                    </label>
+                    <label class="field">
+                        <span>Check-out Date</span>
+                        <input type="date" id="checkOutDate">
+                    </label>
+                </div>
+
+                <div class="summary-card">
+                    <div>
+                        <span>Total Stay</span>
+                        <strong id="nightsText">1 day</strong>
+                    </div>
+                    <div>
+                        <span>Total Amount</span>
+                        <strong id="amountText">PHP 250.00</strong>
+                    </div>
+                </div>
+
+                <div class="rate-detail-panel">
+                    <div class="rate-detail">
+                        <span>Standard Room</span>
+                        <strong>Fan room bedspace</strong>
+                        <small>PHP 250 per day, shared room facilities.</small>
+                    </div>
+                    <div class="rate-detail premium">
+                        <span>Premium Room</span>
+                        <strong>Aircon room bedspace</strong>
+                        <small>PHP 500 per day, air-conditioned room assignment.</small>
+                    </div>
+                </div>
+
+                <div class="panel-title bed-title">Choose Bedspace</div>
+                <div class="bed-help">Only currently vacant monthly bedspaces are shown. Final date availability is checked when you submit.</div>
+                <div class="beds-list" id="bedsList">
+                    <div class="empty-state">Loading bedspaces...</div>
+                </div>
+            </div>
+
+            <aside class="checkout-panel">
+                <div class="panel-title">Application Summary</div>
+                <div class="selected-box">
+                    <div class="selected-label">Selected Bedspace</div>
+                    <div class="selected-value" id="selectedBedText">None selected</div>
+                    <div class="selected-sub" id="selectedStayText">Choose dates and bedspace to continue.</div>
+                </div>
+
+                <button type="button" class="checkout-btn" id="checkoutBtn">Continue to Personal Information</button>
+                <div class="checkout-note">No payment is collected now. Payment will open only after admin approval.</div>
+
+                <div class="side-info-list">
+                    <div class="side-info-item">
+                        <span>1</span>
+                        <div>
+                            <strong>Select stay</strong>
+                            <p>Pick room type, dates, and bedspace.</p>
+                        </div>
+                    </div>
+                    <div class="side-info-item">
+                        <span>2</span>
+                        <div>
+                            <strong>Submit documents</strong>
+                            <p>Complete your information in the next page.</p>
+                        </div>
+                    </div>
+                    <div class="side-info-item">
+                        <span>3</span>
+                        <div>
+                            <strong>Wait for approval</strong>
+                            <p>Admin reviews room availability and requirements.</p>
+                        </div>
+                    </div>
+                    <div class="side-info-item">
+                        <span>4</span>
+                        <div>
+                            <strong>Pay approved bill</strong>
+                            <p>Payment opens only after approval.</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="guidelines-section">
+            <div class="section-head">
+                <div>
+                    <h2>Stay Reminders</h2>
+                    <p>These details help keep transient requests clear before review.</p>
+                </div>
+            </div>
+            <div class="guideline-grid">
+                <div class="guideline-item">
+                    <strong>Check-in and check-out dates</strong>
+                    <p>Your total bill is based on the number of days between check-in and check-out.</p>
+                </div>
+                <div class="guideline-item">
+                    <strong>Bedspace is not final until approved</strong>
+                    <p>The admin team may still verify if the selected bedspace is available for the full stay period.</p>
+                </div>
+                <div class="guideline-item">
+                    <strong>House rules still apply</strong>
+                    <p>Visitors, alcohol, smoking, loud noise, and other restricted activities follow CitiHub guidelines.</p>
+                </div>
+                <div class="guideline-item">
+                    <strong>Monthly booking disabled while active</strong>
+                    <p>After submitting a transient request, you cannot submit a monthly booking request until the active request is cleared.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="history-section">
+            <div class="section-head">
+                <div>
+                    <h2>Your Transient Bed Requests</h2>
+                    <p>Track payment and approval status for your daily stays.</p>
+                </div>
+            </div>
+            <div class="history-list" id="transientHistory">
+                <div class="empty-state">No transient bed requests yet.</div>
+            </div>
+        </section>
+    </main>
+
+    <div class="toast" id="toast"></div>
+    <script src="../../shared/api-config.js"></script>
+    <script src="../js files/firebase-init.js"></script>
+    <script src="../js files/transient-bed.js"></script>
+</body>
+</html>

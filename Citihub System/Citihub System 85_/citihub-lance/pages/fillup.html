@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="../js files/theme.js"></script>
+  <title>CitiHub - Tenant Information</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <link rel="stylesheet" href="../css files/fillup.css"/>
+  <link rel="stylesheet" href="../css files/page-loader.css"/>
+  <script src="../js files/page-loader.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body data-loader-mode="manual">
+
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+  <div class="page-loading-box">
+    <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+    <div class="page-loading-spinner"></div>
+    <div class="page-loading-title">Preparing your application form</div>
+    <p class="page-loading-text">Please wait while we load your saved details and required documents.</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <img src="../images/logo.png" class="nav-logo" alt="CitiHub Logo"/>
+    <div>
+      <div class="nav-brand-text">CITIHUB DORMITORY</div>   
+      <div class="nav-brand-sub">1st St, Santa Mesa, Manila, Metro Manila</div>
+    </div>
+  </div>
+  <div class="nav-step-label">Step 3 of 4 - Personal Info</div>
+</nav>
+
+<!-- HERO BANNER -->
+<div class="hero-banner">
+  <div class="hero-inner">
+      <img src="../images/logo.png" class="hero-icon" alt="CitiHub Logo" />
+    <div>
+      <div class="hero-title">Welcome to CitiHub!</div>
+      <div class="hero-sub">Your account is created. Please complete your tenant information and upload the required documents to proceed with your move-in.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+  <div class="progress-bar">
+    <div class="progress-step done">
+      <div class="step-circle">&#10003;</div>
+      <div class="step-label">Create Account</div>
+    </div>
+    <div class="progress-line filled"></div>
+    <div class="progress-step done">
+      <div class="step-circle">&#10003;</div>
+      <div class="step-label">Choose Bedspace</div>
+    </div>
+    <div class="progress-line filled"></div>
+    <div class="progress-step active">
+      <div class="step-circle">3</div>
+      <div class="step-label">Personal Info</div>
+    </div>
+    <div class="progress-line"></div>
+    <div class="progress-step">
+      <div class="step-circle">4</div>
+      <div class="step-label">Submit</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="page-top-actions">
+    <a href="main.html" class="back-dashboard-btn">&larr; Back to Dashboard</a>
+  </div>
+
+  <!-- SECTION 1: BASIC INFO -->
+  <div class="section-card" id="section-personal">
+    <div class="section-header">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Personal Information
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">First Name <span class="req">*</span></label>
+        <input type="text" class="field-input" id="firstNameInput" placeholder="e.g. Juan dela Cruz" maxlength="60" autocomplete="given-name"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Last Name <span class="req">*</span></label>
+        <input type="text" class="field-input" id="lastNameInput" placeholder="e.g. Santos" maxlength="60" autocomplete="family-name"/>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Email Address <span class="req">*</span></label>
+        <input type="email" class="field-input" id="emailInput" placeholder="yourname@email.com"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Phone Number <span class="req">*</span></label>
+        <input type="tel" class="field-input" id="phoneInput" placeholder="09XXXXXXXXX" inputmode="numeric" maxlength="11" autocomplete="tel"/>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Date of Birth <span class="req">*</span></label>
+        <input type="date" class="field-input" id="birthDateInput"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Gender <span class="req">*</span></label>
+        <select class="field-input" id="genderSelect">
+          <option value="" disabled selected>Select gender</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Bisexual</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field full">
+      <label class="field-label">Home Address <span class="req">*</span></label>
+      <input type="text" class="field-input" id="addressInput" placeholder="Street, Barangay, City, Province" maxlength="180" autocomplete="street-address"/>
+    </div>
+  </div>
+
+  <!-- SECTION 2: EMERGENCY CONTACT -->
+  <div class="section-card" id="section-emergency-contact">
+    <div class="section-header">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Emergency Contact
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Contact Name <span class="req">*</span></label>
+        <input type="text" class="field-input" id="emergencyNameInput" placeholder="Full name" maxlength="80" autocomplete="name"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Relationship <span class="req">*</span></label>
+        <select class="field-input">
+          <option value="" disabled selected>Select relationship</option>
+          <option>Parent</option>
+          <option>Sibling</option>
+          <option>Spouse</option>
+          <option>Relative</option>
+          <option>Friend</option>
+          <option>Guardian</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Phone Number <span class="req">*</span></label>
+        <input type="tel" class="field-input" id="emergencyPhoneInput" placeholder="09XXXXXXXXX" inputmode="numeric" maxlength="11" autocomplete="tel"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Alternative Number</label>
+        <input type="tel" class="field-input" id="emergencyAltInput" placeholder="09XXXXXXXXX or landline" inputmode="numeric" maxlength="11" autocomplete="tel"/>
+      </div>
+    </div>
+
+    <div class="field full">
+      <label class="field-label">Address</label>
+      <input type="text" class="field-input" id="emergencyAddressInput" placeholder="Street, Barangay, City, Province" maxlength="180" autocomplete="street-address"/>
+    </div>
+  </div>
+
+  <!-- SECTION 3: APPLICANT TYPE -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Applicant Type
+      </div>
+      <div class="section-sub">Select your status to see the required documents</div>
+    </div>
+
+    <div class="applicant-types">
+      <div class="applicant-card" onclick="selectType('student')" id="type-student">
+        <div class="applicant-icon"></div>
+        <div class="applicant-label">Student</div>
+        <div class="applicant-desc">Currently enrolled in school or university</div>
+      </div>
+      <div class="applicant-card" onclick="selectType('employed')" id="type-employed">
+        <div class="applicant-icon"></div>
+        <div class="applicant-label">Employed</div>
+        <div class="applicant-desc">Currently working with a company or employer</div>
+      </div>
+      <div class="applicant-card" onclick="selectType('unemployed')" id="type-unemployed">
+        <div class="applicant-icon"></div>
+        <div class="applicant-label">Unemployed</div>
+        <div class="applicant-desc">Currently not employed or between jobs</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: OPTIONAL ADD-ONS -->
+  <div class="section-card" id="addonsSection">
+    <div class="section-header">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M1 12h22"/><path d="M5 5l14 14"/><path d="M19 5L5 19"/></svg>
+        Optional Add-ons
+      </div>
+      <div class="section-sub">You can already request monthly add-on services now, and you can still update them later after approval.</div>
+    </div>
+
+    <div class="addons-shell">
+      <div class="addons-grid">
+        <label class="addon-card">
+          <input type="checkbox" class="addon-check" id="addon-locker_medium">
+          <div class="addon-card-top">
+            <div>
+              <div class="addon-name">Medium Locker</div>
+              <div class="addon-desc">Personal secured storage inside CitiHub.</div>
+            </div>
+            <div class="addon-price">PHP 200.00</div>
+          </div>
+          <div class="addon-meta">Monthly recurring add-on</div>
+        </label>
+
+        <label class="addon-card">
+          <input type="checkbox" class="addon-check" id="addon-motorcycle_parking">
+          <div class="addon-card-top">
+            <div>
+              <div class="addon-name">Motorcycle Parking</div>
+              <div class="addon-desc">Reserved motorcycle slot within the property.</div>
+            </div>
+            <div class="addon-price">PHP 600.00</div>
+          </div>
+          <div class="addon-meta">Monthly recurring add-on</div>
+        </label>
+
+        <label class="addon-card">
+          <input type="checkbox" class="addon-check" id="addon-car_parking">
+          <div class="addon-card-top">
+            <div>
+              <div class="addon-name">Car Parking</div>
+              <div class="addon-desc">Reserved monthly car parking service.</div>
+            </div>
+            <div class="addon-price">PHP 4,000.00</div>
+          </div>
+          <div class="addon-meta">Monthly recurring add-on</div>
+        </label>
+
+        <label class="addon-card">
+          <input type="checkbox" class="addon-check" id="addon-wifi">
+          <div class="addon-card-top">
+            <div>
+              <div class="addon-name">WiFi</div>
+              <div class="addon-desc">Shared monthly wireless internet access.</div>
+            </div>
+            <div class="addon-price">PHP 200.00</div>
+          </div>
+          <div class="addon-meta">Monthly recurring add-on</div>
+        </label>
+      </div>
+
+      <div class="addons-summary-card">
+        <div class="addons-summary-head">
+          <div>
+            <div class="addons-summary-title">Selected Add-ons</div>
+            <div class="addons-summary-sub" id="addonsCount">No add-ons selected yet</div>
+          </div>
+          <div class="addons-summary-total" id="addonsTotal">Optional</div>
+        </div>
+        <div class="addons-summary-list" id="addonsSummary">
+          <div class="addons-summary-empty">You can leave this blank for now and add services later after approval.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: DOCUMENT UPLOAD -->
+  <div class="section-card" id="section-docs">
+    <div class="section-header">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Required Documents
+      </div>
+      <div class="section-sub">Please select your applicant type above first</div>
+    </div>
+
+    <div class="docs-intro-card">
+      <div class="docs-intro-title">Prepare your uploads before submitting</div>
+      <div class="docs-intro-copy">We only need the applicant-specific documents for your selected status, plus one identity-check photo for security review.</div>
+      <div class="docs-intro-tips">
+        <span class="docs-tip-pill">Readable text</span>
+        <span class="docs-tip-pill">No glare or blur</span>
+        <span class="docs-tip-pill">JPG or PNG only</span>
+        <span class="docs-tip-pill">Up to 5MB each</span>
+      </div>
+    </div>
+
+    <div class="doc-panels">
+      <div class="doc-panel doc-panel-primary">
+        <div class="doc-panel-header">
+          <div class="doc-panel-title">Applicant Requirements</div>
+          <div class="doc-panel-sub">These depend on whether you are a student, employed, or unemployed.</div>
+        </div>
+
+        <!-- STUDENT DOCS -->
+        <div class="doc-group" id="docs-student" style="display:none;">
+          <div class="doc-notice">
+            <span>&#9432;</span> Student applicants only need to upload their <strong>School ID</strong>.
+          </div>
+          <div class="upload-grid upload-grid-compact">
+            <div class="upload-box upload-box-spotlight" onclick="triggerUpload('school-id')">
+              <input type="file" id="school-id" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple style="display:none" onchange="handleUpload(this,'school-id-display')"/>
+              <div class="upload-icon"></div>
+              <div class="upload-title">School ID <span class="req">*</span></div>
+              <div class="upload-hint">JPG or PNG only - Max 5MB</div>
+              <div class="upload-status" id="school-id-display">Click to upload</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMPLOYED DOCS -->
+        <div class="doc-group" id="docs-employed" style="display:none;">
+          <div class="doc-notice">
+            <span>&#9432;</span> Employed applicants only need to upload their <strong>Company ID or COE</strong>.
+          </div>
+          <div class="upload-grid upload-grid-compact">
+            <div class="upload-box" onclick="triggerUpload('company-id')">
+              <input type="file" id="company-id" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple style="display:none" onchange="handleUpload(this,'company-id-display')"/>
+              <div class="upload-icon"></div>
+              <div class="upload-title">Company ID or COE <span class="req">*</span></div>
+              <div class="upload-hint">JPG or PNG only - Max 5MB</div>
+              <div class="upload-status" id="company-id-display">Click to upload</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- UNEMPLOYED DOCS -->
+        <div class="doc-group" id="docs-unemployed" style="display:none;">
+          <div class="doc-notice">
+            <span>&#9432;</span> Required documents for <strong>Unemployed</strong> applicants
+          </div>
+          <div class="upload-grid">
+            <div class="upload-box" onclick="triggerUpload('nbi')">
+              <input type="file" id="nbi" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple style="display:none" onchange="handleUpload(this,'nbi-display')"/>
+              <div class="upload-icon"></div>
+              <div class="upload-title">NBI Clearance <span class="req">*</span></div>
+              <div class="upload-hint">JPG or PNG only - Max 5MB</div>
+              <div class="upload-status" id="nbi-display">Click to upload</div>
+            </div>
+            <div class="upload-box" onclick="triggerUpload('med-cert')">
+              <input type="file" id="med-cert" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple style="display:none" onchange="handleUpload(this,'med-cert-display')"/>
+              <div class="upload-icon"></div>
+              <div class="upload-title">Medical Certificate <span class="req">*</span></div>
+              <div class="upload-hint">Fit to Work - Max 5MB</div>
+              <div class="upload-status" id="med-cert-display">Click to upload</div>
+            </div>
+            <div class="upload-box" onclick="triggerUpload('gov-id-unemp')">
+              <input type="file" id="gov-id-unemp" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple style="display:none" onchange="handleUpload(this,'gov-id-unemp-display')"/>
+              <div class="upload-icon"></div>
+              <div class="upload-title">Valid Government ID <span class="req">*</span></div>
+              <div class="upload-hint">JPG or PNG only - Max 5MB</div>
+              <div class="upload-status" id="gov-id-unemp-display">Click to upload</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLACEHOLDER when no type selected -->
+        <div id="docs-placeholder" class="docs-placeholder">
+          <div class="placeholder-icon">&#128196;</div>
+          <div class="placeholder-text">Select your applicant type above to see required documents</div>
+        </div>
+      </div>
+
+      <div class="doc-panel doc-panel-security">
+        <div class="doc-panel-header">
+          <div class="doc-panel-title">Identity Check</div>
+          <div class="doc-panel-sub">Required for all applicants to support admin identity verification.</div>
+        </div>
+        <div class="doc-notice doc-notice-security">
+          <span>&#128274;</span> Upload one clear photo of yourself holding your ID. Your face and the ID details must both be visible.
+        </div>
+        <div class="upload-grid upload-grid-compact">
+          <div class="upload-box upload-box-security" onclick="triggerUpload('selfie-id')">
+            <input type="file" id="selfie-id" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple style="display:none" onchange="handleUpload(this,'selfie-id-display')"/>
+            <div class="upload-icon"></div>
+            <div class="upload-title">Selfie Holding ID <span class="req">*</span></div>
+            <div class="upload-hint">Face and ID must be clearly visible - Max 5MB</div>
+            <div class="upload-status" id="selfie-id-display">Click to upload</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGREEMENT + SUBMIT -->
+  <div class="section-card submit-card">
+    <div class="agree-row">
+      <input type="checkbox" id="agree-terms" class="agree-check"/>
+      <label for="agree-terms" class="agree-label">
+        I confirm that all information provided is accurate and complete. I agree to the
+        <a href="#" class="link-green">Terms and Conditions</a> of CitiHub Dormitory.
+      </label>
+    </div>
+    <button class="submit-btn" onclick="handleSubmit()">
+      Submit Application &rarr;
+    </button>
+    <div class="submit-note">Our team will review your application within 1-2 business days.</div>
+  </div>
+
+</div>
+
+<div class="app-toast" id="appPopup" aria-live="polite" aria-atomic="true">
+  <div class="app-toast-icon" id="popupIcon">i</div>
+  <div class="app-toast-content">
+    <div class="app-toast-title" id="popupTitle">Notice</div>
+    <div class="app-toast-message" id="popupMessage">Message goes here.</div>
+  </div>
+  <button type="button" class="app-toast-close" id="popupConfirm" aria-label="Dismiss notification">x</button>
+  <button type="button" id="popupCancel" hidden></button>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div id="success-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+  <div class="modal-box">
+    <img src="../images/check.jpg" class="modal-icon" alt="Success" />
+    <div class="modal-title">One more Step!</div>
+    <div class="modal-sub">Please check the summary of your information to finalize your application.</div>
+    <button class="modal-btn" onclick="goToSummaryPage()">Go to Summary &rarr;</button>
+  </div>
+</div>
+   <script src="../js files/firebase-init.js"></script>
+<script src="../js files/fillup.js"></script>
+</body>
+</html>

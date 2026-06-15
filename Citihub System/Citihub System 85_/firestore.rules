@@ -1,0 +1,202 @@
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isAdmin() {
+        return isSignedIn() &&
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      function ownerDidNotChangeProtectedUserFields() {
+        return !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+          "role",
+          "bookingBlocked",
+          "bookingBlockedReason",
+          "bookingBlockedBy",
+          "bookingBlockedAt"
+        ]);
+      }
+
+      function ownerDidNotCreateProtectedUserFields() {
+        return !request.resource.data.keys().hasAny([
+          "role",
+          "bookingBlocked",
+          "bookingBlockedReason",
+          "bookingBlockedBy",
+          "bookingBlockedAt"
+        ]);
+      }
+
+      function isValidDownPaymentCreate() {
+        return isSignedIn()
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.keys().hasOnly([
+            "userId",
+            "bookingRequestId",
+            "bookingReferenceId",
+            "room",
+            "bed",
+            "amount",
+            "currency",
+            "type",
+            "method",
+            "status",
+            "gateway",
+            "paymongoCheckoutId",
+            "paymongoCheckoutUrl",
+            "paymongoSuccessUrl",
+            "paymongoCancelUrl",
+            "tenantName",
+            "tenantEmail",
+            "createdAt",
+            "updatedAt",
+            "paidAt"
+          ])
+          && request.resource.data.type == "down_payment"
+          && request.resource.data.amount == 1000
+          && request.resource.data.currency == "PHP"
+          && request.resource.data.method in ["card", "gcash", "maya", "grab_pay", "shopeepay", "qrph", "online_banking", "billease"]
+          && request.resource.data.status == "pending_gateway";
+      }
+
+      function isValidRating(userId) {
+        return isOwner(userId)
+          && request.resource.data.userId == userId
+          && request.resource.data.keys().hasOnly([
+            "userId",
+            "fullName",
+            "email",
+            "room",
+            "overallRating",
+            "roomRating",
+            "adminServiceRating",
+            "comment",
+            "createdAt",
+            "updatedAt"
+          ])
+          && request.resource.data.overallRating is number
+          && request.resource.data.roomRating is number
+          && request.resource.data.adminServiceRating is number
+          && request.resource.data.overallRating >= 1
+          && request.resource.data.overallRating <= 5
+          && request.resource.data.roomRating >= 1
+          && request.resource.data.roomRating <= 5
+          && request.resource.data.adminServiceRating >= 1
+          && request.resource.data.adminServiceRating <= 5;
+      }
+
+      function isValidMaintenanceTicketCreate() {
+        return isSignedIn()
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.keys().hasOnly([
+            "userId",
+            "tenantName",
+            "tenantEmail",
+            "room",
+            "category",
+            "priority",
+            "subject",
+            "description",
+            "status",
+            "adminNote",
+            "createdAt",
+            "updatedAt"
+          ])
+          && request.resource.data.tenantName is string
+          && request.resource.data.tenantEmail is string
+          && request.resource.data.room is string
+          && request.resource.data.category is string
+          && request.resource.data.priority in ["low", "medium", "high"]
+          && request.resource.data.subject is string
+          && request.resource.data.subject.size() > 0
+          && request.resource.data.subject.size() <= 90
+          && request.resource.data.description is string
+          && request.resource.data.description.size() > 0
+          && request.resource.data.description.size() <= 500
+          && request.resource.data.status == "open"
+          && request.resource.data.adminNote == "";
+      }
+
+      match /users/{userId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isAdmin() || (isOwner(userId) && ownerDidNotCreateProtectedUserFields());
+        allow update: if isAdmin() || (isOwner(userId) && ownerDidNotChangeProtectedUserFields());
+        allow delete: if isAdmin();
+      }
+
+      match /users/{userId}/messages/{messageId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId);
+        allow update: if false;
+        allow delete: if isOwner(userId);
+      }
+
+      match /announcements/{id} {
+        allow read: if isSignedIn();
+        allow write: if false;
+      }
+
+      match /bookingRequest/{docId} {
+        allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+        allow create, update, delete: if false;
+      }
+
+      match /transientBedBookings/{docId} {
+        allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+        allow create, update, delete: if false;
+      }
+
+      match /ROOMS/{roomId} {
+        allow read: if isSignedIn();
+        allow write: if false;
+      }
+
+      match /adminHistory/{historyId} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+
+      match /ratings/{userId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create, update: if isValidRating(userId);
+        allow delete: if false;
+      }
+
+      match /maintenanceTickets/{ticketId} {
+        allow read: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
+        allow create: if isValidMaintenanceTicketCreate();
+        allow update: if false;
+        allow delete: if false;
+      }
+
+      match /tenantComplaints/{complaintId} {
+        allow read: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
+        allow create, update, delete: if false;
+      }
+
+      match /billingInvoices/{invoiceId} {
+        allow read: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
+        allow create, update, delete: if false;
+      }
+
+      match /payments/{paymentId} {
+        allow read: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
+        allow create: if isValidDownPaymentCreate();
+        allow update: if isAdmin();
+        allow delete: if false;
+      }
+
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+  }

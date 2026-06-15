@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITIHUB - Messages</title>
+       <link rel="stylesheet" href="../admin css files/messages.css">
+    <link rel="stylesheet" href="../admin css files/admin-base.css">
+    <link rel="stylesheet" href="../admin css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+    <script src="../admin js/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+<body class="hidden-page" data-loader-mode="manual">
+
+    <div class="page-loading-overlay" id="pageLoadingOverlay">
+        <div class="page-loading-box">
+            <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+            <div class="page-loading-spinner"></div>
+            <div class="page-loading-title">Loading messages</div>
+            <p class="page-loading-text">Please wait while we verify admin access and prepare tenant conversations.</p>
+        </div>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="../images/logo.png" class="sidebar-logo" alt="CitiHub Logo">
+            <div class="sidebar-brand-text">
+                <div class="sidebar-name">CITIHUB</div>
+                <div class="sidebar-role">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Main</div>
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">&#127968;</span> Dashboard</a>
+            <a href="tenants.html" class="nav-item"><span class="nav-icon">&#128101;</span> Tenants</a>
+            <a href="accounts.html" class="nav-item"><span class="nav-icon">&#128100;</span> Accounts</a>
+            <a href="bookings.html" class="nav-item"><span class="nav-icon">&#128229;</span> Online Bookings <span class="nav-badge">2</span></a>
+            <a href="transient-beds.html" class="nav-item"><span class="nav-icon">&#127976;</span> Transient Beds <span class="nav-badge"></span></a>
+            <a href="rooms.html" class="nav-item"><span class="nav-icon">&#128719;</span> Rooms</a>
+            <a href="billing.html" class="nav-item"><span class="nav-icon">&#128179;</span> Billing <span class="nav-badge"></span></a>
+            <a href="reports.html" class="nav-item"><span class="nav-icon">&#128202;</span> Reports</a>
+            <div class="nav-group-label">Communication</div>
+            <a href="bulletin.html" class="nav-item"><span class="nav-icon">&#128203;</span> Bulletin Board</a>
+            <a href="messages.html" class="nav-item active"><span class="nav-icon">&#128172;</span> Messages <span class="nav-badge">3</span></a>
+            <a href="maintenance.html" class="nav-item"><span class="nav-icon">&#128295;</span> Maintenance</a>
+            <a href="complaints.html" class="nav-item"><span class="nav-icon">&#128680;</span> Complaints <span class="nav-badge"></span></a>
+            <div class="nav-group-label">System</div>
+            <a href="admin-history.html" class="nav-item"><span class="nav-icon">&#128338;</span> Admin History</a>
+            <a href="settings.html" class="nav-item"><span class="nav-icon">&#9881;&#65039;</span> Settings</a>
+            <a href="#" class="nav-item logout" id="btnLogout"><span class="nav-icon">&#8617;</span> Log Out</a>
+        </nav>
+    </aside>
+
+    <div class="main-wrap">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleAdminSidebar()">&#9776;</button>
+                <div class="topbar-title">Messages</div>
+            </div>
+            <div class="topbar-right">
+                
+                <div class="admin-info">
+                    <div class="admin-welcome">Welcome, Admin</div>
+                    <div class="admin-role">Super Admin</div>
+                </div>
+                <div class="avatar-container">
+                    <div class="avatar">AD</div>
+                    <div class="avatar-dropdown">
+                        <a href="settings.html" class="dropdown-item">&#9881;&#65039; Settings</a>
+                        <a href="#" class="dropdown-item">&#128100; Profile</a>
+                        <a href="../admin-ui/adminlogin.html" class="dropdown-item" id="btnLogout">&#8617; Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page">
+                <div class="page-header"><div><h1 class="page-title">Messages</h1><p class="page-sub">Tenant inquiries and customer support conversations</p></div></div>
+                <div class="chat-layout">
+                    <div class="chat-sidebar">
+                        <div class="chat-sidebar-header"><div class="search-bar" style="width:100%"><span>&#128269;</span><input type="text" placeholder="Search..." class="search-input" id="tenantSearchInput"></div></div>
+                        <div class="convo-list" id="approvedTenantList">
+                            <div class="convo-item active">
+                                <div class="convo-info">
+                                    <div class="convo-name">Loading approved tenants...</div>
+                                    <div class="convo-preview">Please wait...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-main">
+                        <div class="chat-topbar">
+                            <div class="chat-topbar-left">
+                                <button class="chat-sidebar-toggle" type="button" id="chatSidebarToggle" aria-label="Hide tenant list" title="Hide tenant list">&#9776;</button>
+                                <div class="convo-avatar green" id="chatAvatar">U</div>
+                                <div><div class="chat-name" id="chatName">Select a tenant</div><div class="chat-sub" id="chatSub">Real-time tenant messages will appear here.</div></div>
+                            </div>
+                            <div class="chat-topbar-right"><a href="tenants.html" class="tbl-btn" style="text-decoration:none;" id="viewTenantProfileBtn">&#128065; View Profile</a></div>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-date-label">Ready</div>
+                            <div class="msg-row tenant"><div class="msg-avatar green">U</div><div class="msg-bubble tenant">Choose a tenant from the left to open the conversation.</div></div>
+                        </div>
+                        <div class="chat-input-bar">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." autocomplete="off">
+                            <button class="chat-send-btn" id="chatSendBtn">&#10148;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <div class="modal-overlay" id="tenantProfileModal">
+        <div class="modal-box tenant-profile-modal">
+            <div class="modal-header">
+                <div class="modal-title">Tenant Profile</div>
+                <button class="modal-close" type="button" id="tenantProfileClose">&times;</button>
+            </div>
+            <div class="modal-body" id="tenantProfileBody">
+                <div class="ticket-detail-empty">Select a tenant conversation first.</div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-cancel-btn" type="button" id="tenantProfileDone">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../admin js/firebase-init.js"></script>
+    <script src="../admin js/ui-feedback.js"></script>
+    <script src="../admin js/admin-auth.js"></script>
+    <script src="../admin js/admin-nav-badges.js"></script>
+    <script src="../admin js/messages.js"></script>
+    
+</body>
+</html>
+
+
+
+

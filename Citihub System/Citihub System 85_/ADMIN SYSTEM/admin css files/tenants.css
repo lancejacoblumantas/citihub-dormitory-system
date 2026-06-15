@@ -1,0 +1,316 @@
+/* CitiHub Admin - Tenants */
+
+.hidden-page {
+  visibility: hidden;
+}
+
+.tenants-page-header {
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.page-kicker {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.tenant-header-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.tenant-export-bar {
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  padding: 14px 18px;
+  width: 100%;
+}
+
+.tenant-export-title {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.tenant-export-sub {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.tenant-download-btn {
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+  box-shadow: 0 10px 22px rgba(26, 122, 74, 0.18);
+}
+
+.tenant-download-btn:hover {
+  background: #14663d;
+  color: #fff;
+}
+
+.tenant-month-input {
+  min-width: 152px;
+  min-height: 41px;
+}
+
+.tenant-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.tenant-stat-card {
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+  display: flex;
+  gap: 14px;
+  min-height: 108px;
+  padding: 18px;
+}
+
+.tenant-stat-icon {
+  align-items: center;
+  border-radius: 12px;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 20px;
+  height: 46px;
+  justify-content: center;
+  width: 46px;
+}
+
+.tenant-stat-icon.green { background: var(--green-bg); }
+.tenant-stat-icon.standard { background: #eef6ff; }
+.tenant-stat-icon.premium { background: var(--teal-bg); }
+.tenant-stat-icon.revenue { background: var(--amber-bg); }
+
+.tenant-stat-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.tenant-stat-value {
+  color: var(--text);
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.tenant-stat-note {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.tenants-card {
+  overflow: hidden;
+}
+
+.tenants-toolbar {
+  align-items: center;
+  background: linear-gradient(180deg, #ffffff, #fbfdfc);
+}
+
+.tenant-toolbar-title {
+  min-width: 180px;
+}
+
+.tenant-card-title {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.tenant-card-sub {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.tenant-filter-row {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.tenant-search {
+  min-width: 280px;
+}
+
+.tenants-table th:first-child,
+.tenants-table td:first-child {
+  padding-left: 20px;
+}
+
+.tenants-table th:last-child,
+.tenants-table td:last-child {
+  padding-right: 20px;
+}
+
+.tenants-table tbody tr {
+  transition: background 0.15s, transform 0.15s;
+}
+
+.tenants-table .td-name {
+  font-size: 14px;
+}
+
+.tenants-table .td-avatar {
+  box-shadow: 0 0 0 3px rgba(26, 122, 74, 0.12);
+}
+
+.tenants-table .td-room {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.tenants-table .td-contract-end {
+  white-space: nowrap;
+}
+
+.tenant-billing-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  max-width: 140px;
+}
+
+.tenant-billing-note {
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+  max-width: 140px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.tenants-table .tbl-btn {
+  border-color: rgba(26, 122, 74, 0.22);
+  color: var(--green);
+  padding: 7px 13px;
+}
+
+.tenants-table .tbl-btn:hover {
+  background: var(--green-bg);
+}
+
+.tenant-empty-state {
+  align-items: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 44px 18px;
+  text-align: center;
+}
+
+.tenant-empty-icon {
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  font-size: 22px;
+  height: 48px;
+  justify-content: center;
+  margin-bottom: 4px;
+  width: 48px;
+}
+
+.tenant-empty-title {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.tenant-empty-text {
+  font-size: 13px;
+}
+
+.tenant-detail-modal {
+  max-width: 720px;
+}
+
+.tenant-modal-body {
+  gap: 12px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.tenant-modal-hero {
+  background: linear-gradient(135deg, rgba(26, 122, 74, 0.1), rgba(13, 122, 110, 0.08));
+  border: 1px solid rgba(26, 122, 74, 0.14);
+  border-radius: 14px;
+  margin-bottom: 8px;
+  padding: 16px;
+}
+
+.tenant-modal-hero .tm-avatar {
+  box-shadow: 0 8px 20px rgba(26, 122, 74, 0.22);
+}
+
+@media (max-width: 1100px) {
+  .tenant-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .tenant-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tenant-filter-row,
+  .tenant-export-bar,
+  .tenant-search,
+  .tenant-filter-row .filter-select {
+    width: 100%;
+  }
+
+  .tenant-export-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tenant-filter-row,
+  .tenant-header-actions {
+    justify-content: stretch;
+  }
+
+  .tenant-header-actions .download-btn,
+  .tenant-header-actions .filter-select {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tenant-detail-modal {
+    width: 94%;
+  }
+}

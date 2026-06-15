@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITIHUB - Tenants</title>
+    <link rel="stylesheet" href="../admin css files/admin-base.css">
+    <link rel="stylesheet" href="../admin css files/tenants.css">
+    <link rel="stylesheet" href="../admin css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+       <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../admin js/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+<body class="hidden-page" data-loader-mode="manual">
+
+    <div class="page-loading-overlay" id="pageLoadingOverlay">
+        <div class="page-loading-box">
+            <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+            <div class="page-loading-spinner"></div>
+            <div class="page-loading-title">Loading tenants</div>
+            <p class="page-loading-text">Please wait while we verify admin access and load tenant records.</p>
+        </div>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="../images/logo.png" class="sidebar-logo" alt="CitiHub Logo">
+            <div class="sidebar-brand-text">
+                <div class="sidebar-name">CITIHUB</div>
+                <div class="sidebar-role">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Main</div>
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">&#127968;</span> Dashboard</a>
+            <a href="tenants.html" class="nav-item active"><span class="nav-icon">&#128101;</span> Tenants</a>
+            <a href="accounts.html" class="nav-item"><span class="nav-icon">&#128100;</span> Accounts</a>
+            <a href="bookings.html" class="nav-item"><span class="nav-icon">&#128229;</span> Online Bookings <span class="nav-badge">2</span></a>
+            <a href="transient-beds.html" class="nav-item"><span class="nav-icon">&#127976;</span> Transient Beds <span class="nav-badge"></span></a>
+            <a href="transfer-requests.html" class="nav-item"><span class="nav-icon">&#8644;</span> Transfers</a>
+            <a href="rooms.html" class="nav-item"><span class="nav-icon">&#128719;</span> Rooms</a>
+            <a href="billing.html" class="nav-item"><span class="nav-icon">&#128179;</span> Billing <span class="nav-badge"></span></a>
+            
+            <a href="reports.html" class="nav-item"><span class="nav-icon">&#128202;</span> Reports</a>
+            <div class="nav-group-label">Communication</div>
+            <a href="bulletin.html" class="nav-item"><span class="nav-icon">&#128203;</span> Bulletin Board</a>
+            <a href="messages.html" class="nav-item"><span class="nav-icon">&#128172;</span> Messages <span class="nav-badge">3</span></a>
+            <a href="maintenance.html" class="nav-item"><span class="nav-icon">&#128295;</span> Maintenance</a>
+            <a href="complaints.html" class="nav-item"><span class="nav-icon">&#128680;</span> Complaints <span class="nav-badge"></span></a>
+            <div class="nav-group-label">System</div>
+            <a href="admin-history.html" class="nav-item"><span class="nav-icon">&#128338;</span> Admin History</a>
+            <a href="settings.html" class="nav-item"><span class="nav-icon">&#9881;&#65039;</span> Settings</a>
+            <a href="#" class="nav-item logout" id="btnLogout"><span class="nav-icon">&#8617;</span> Log Out</a>
+        </nav>
+    </aside>
+
+    <div class="main-wrap">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleAdminSidebar()">&#9776;</button>
+                <div class="topbar-title">Tenants</div>
+            </div>
+            <div class="topbar-right">
+              
+                <div class="admin-info">
+                    <div class="admin-welcome">Welcome, Admin</div>
+                    <div class="admin-role">Super Admin</div>
+                </div>
+                <div class="avatar-container">
+                    <div class="avatar">AD</div>
+                    <div class="avatar-dropdown">
+                        <a href="settings.html" class="dropdown-item">&#9881;&#65039; Settings</a>
+                        <a href="#" class="dropdown-item">&#128100; Profile</a>
+                        <a href="../admin-ui/adminlogin.html" class="dropdown-item" id="btnLogout">&#8617; Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page">
+                <div class="page-header tenants-page-header">
+                    <div>
+                        <div class="page-kicker">Tenant Management</div>
+                        <h1 class="page-title">Tenants</h1>
+                        <p class="page-sub">Monitor approved tenants, assigned rooms, rates, and contact details.</p>
+                    </div>
+                </div>
+
+                <div class="tenant-export-bar">
+                    <div class="tenant-export-copy">
+                        <div class="tenant-export-title">Tenant Exports</div>
+                        <div class="tenant-export-sub">Download the current filtered list or month-end tenant history.</div>
+                    </div>
+                    <div class="tenant-header-actions">
+                        <input type="month" class="filter-select tenant-month-input" id="tenantHistoryMonth" aria-label="Month-end history month">
+                        <button type="button" class="download-btn" onclick="clearTenantMonthFilter()">All Months</button>
+                        <button class="download-btn tenant-download-btn" onclick="downloadReport('Tenants List')">&#11015; Download PDF</button>
+                        <button class="download-btn" onclick="downloadTenantListCsv()">CSV</button>
+                        <button class="download-btn" onclick="downloadMonthEndHistoryPdf()">Month-End History</button>
+                    </div>
+                </div>
+
+                <div class="tenant-stats-grid">
+                    <div class="tenant-stat-card">
+                        <div class="tenant-stat-icon green">&#128101;</div>
+                        <div>
+                            <div class="tenant-stat-label">Active Tenants</div>
+                            <div class="tenant-stat-value" id="tenantStatTotal">0</div>
+                            <div class="tenant-stat-note">Approved monthly occupants</div>
+                        </div>
+                    </div>
+                    <div class="tenant-stat-card">
+                        <div class="tenant-stat-icon standard">&#127968;</div>
+                        <div>
+                            <div class="tenant-stat-label">Standard Rooms</div>
+                            <div class="tenant-stat-value" id="tenantStatStandard">0</div>
+                            <div class="tenant-stat-note">Fan room tenants</div>
+                        </div>
+                    </div>
+                    <div class="tenant-stat-card">
+                        <div class="tenant-stat-icon premium">&#10024;</div>
+                        <div>
+                            <div class="tenant-stat-label">Premium Rooms</div>
+                            <div class="tenant-stat-value" id="tenantStatPremium">0</div>
+                            <div class="tenant-stat-note">Aircon room tenants</div>
+                        </div>
+                    </div>
+                    <div class="tenant-stat-card">
+                        <div class="tenant-stat-icon revenue">&#8369;</div>
+                        <div>
+                            <div class="tenant-stat-label">Monthly Revenue</div>
+                            <div class="tenant-stat-value" id="tenantStatRevenue">&#8369;0</div>
+                            <div class="tenant-stat-note">Based on approved rates</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card tenants-card">
+                    <div class="card-header tenants-toolbar">
+                        <div class="tenant-toolbar-title">
+                            <div class="tenant-card-title">Tenant Directory</div>
+                            <div class="tenant-card-sub" id="tenantVisibleCount">Showing 0 tenants</div>
+                        </div>
+                        <div class="tenant-filter-row">
+                            <div class="search-bar tenant-search"><span>&#128269;</span><input type="text" placeholder="Search by name, email, or room..." class="search-input" id="tenantSearchInput" oninput="filterTenants()"></div>
+                            <select class="filter-select" id="tenantTypeFilter" onchange="filterTenants()"><option value="">All Room Types</option><option value="standard">Standard</option><option value="premium">Premium</option></select>
+                            <select class="filter-select" id="tenantStatusFilter" onchange="filterTenants()"><option value="">All Statuses</option><option value="active">Active</option><option value="expiring_soon">Expiring Soon</option><option value="delinquent">Delinquent</option><option value="billing_hold">Billing Hold</option></select>
+                            <select class="filter-select" id="tenantRoomFilter" onchange="filterTenants()"><option value="">All Assigned Rooms</option></select>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table tenants-table">
+                            <thead><tr><th>Name</th><th>Room</th><th>Type</th><th>Move-in</th><th>Contract End</th><th>Monthly</th><th>Billing</th><th>Outstanding</th><th>Actions</th></tr></thead>
+                            <tbody id="tenantTableBody" >
+                            <!-- table rows will be populated here by JavaScript -->
+                            </tbody>
+                        </table>
+                        <div class="tenant-empty-state" id="tenantEmptyState" style="display:none;">
+                            <div class="tenant-empty-icon">&#128269;</div>
+                            <div class="tenant-empty-title">No tenants found</div>
+                            <div class="tenant-empty-text">Try changing the search keyword or room filters.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- TENANT MODAL -->
+    <div id="tenantModal" class="modal-overlay">
+        <div class="modal-box tenant-detail-modal">
+            <div class="modal-header"><h3 class="modal-title">&#128100; Tenant Information</h3><button class="modal-close" onclick="closeTenantModal()">&times;</button></div>
+            <div class="modal-body tenant-modal-body" id="tenantModalBody"></div>
+            <div class="modal-footer"><button onclick="closeTenantModal()" class="modal-cancel-btn">Close</button><button onclick="downloadTenantProfilePdf()" class="modal-cancel-btn">&#128196; Profile PDF</button><button onclick="downloadSelectedTenantMonthEndPdf()" class="modal-cancel-btn">Month-End PDF</button><button onclick="messageSelectedTenant()" class="modal-submit-btn">&#128172; Message Tenant</button></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="../admin js/firebase-init.js"></script>
+    <script src="../admin js/ui-feedback.js"></script>
+    <script src="../admin js/admin-auth.js"></script>
+    <script src="../admin js/admin-nav-badges.js"></script>
+    <script src="../admin js/admin-activity.js"></script>
+    <script src="../admin js/tenants.js"></script>
+</body>
+</html>
+
+
+
+

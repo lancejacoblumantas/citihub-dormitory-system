@@ -1,0 +1,341 @@
+.transient-stats {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.transient-filters {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.transient-export-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.transient-stay {
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.transient-sub {
+    color: var(--text-muted);
+    font-size: 11.5px;
+    margin-top: 3px;
+}
+
+.transient-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.status-pill.pending_payment {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-pill.checked_in {
+    background: var(--green-bg);
+    color: var(--green);
+}
+
+.status-pill.checked_out {
+    background: var(--teal-bg);
+    color: var(--teal);
+}
+
+.status-pill.cancelled,
+.status-pill.rejected {
+    background: var(--red-bg);
+    color: #b91c1c;
+}
+
+.transient-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.62);
+}
+
+.transient-modal-overlay.open {
+    display: flex;
+}
+
+.transient-modal {
+    width: min(940px, 100%);
+    max-height: min(90vh, 900px);
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: 0 30px 70px rgba(15, 23, 42, 0.28);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.transient-modal-header,
+.transient-modal-footer {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.transient-modal-footer {
+    border-bottom: 0;
+    border-top: 1px solid var(--border);
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.transient-modal-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.transient-modal-ref,
+.transient-modal-email {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.transient-modal-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.transient-modal-body {
+    padding: 22px;
+    overflow: auto;
+}
+
+.transient-modal-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg);
+    margin-bottom: 18px;
+}
+
+.transient-modal-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--green-bg);
+    color: var(--green);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+}
+
+.transient-modal-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text);
+}
+
+.transient-modal-hero .status-pill {
+    margin-left: auto;
+}
+
+.transient-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.transient-detail-item,
+.transient-modal-section {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg);
+    padding: 14px;
+}
+
+.transient-detail-label,
+.transient-modal-section-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.transient-detail-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    word-break: break-word;
+}
+
+.transient-modal-section {
+    margin-top: 14px;
+}
+
+.transient-doc-list {
+    display: grid;
+    gap: 10px;
+}
+
+.transient-doc-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    background: var(--card);
+}
+
+.transient-doc-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.transient-doc-files {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.transient-doc-link {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 10px;
+    color: var(--green);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--green-bg);
+}
+
+.transient-reason-box {
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.transient-modal-footer .tbl-btn {
+    min-width: 96px;
+}
+
+.transient-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 3200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.62);
+}
+
+.transient-confirm-overlay.open {
+    display: flex;
+}
+
+.transient-confirm-card {
+    width: min(420px, 100%);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.32);
+    padding: 24px;
+    text-align: center;
+}
+
+.transient-confirm-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 14px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: var(--red-bg);
+    color: #b91c1c;
+    font-size: 24px;
+}
+
+.transient-confirm-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.transient-confirm-text {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.transient-confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+    .transient-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .transient-detail-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .transient-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .transient-export-actions {
+        width: 100%;
+    }
+
+    .transient-export-actions .download-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .transient-modal-overlay {
+        padding: 12px;
+    }
+
+    .transient-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .transient-modal-hero {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .transient-modal-hero .status-pill {
+        margin-left: 0;
+    }
+}

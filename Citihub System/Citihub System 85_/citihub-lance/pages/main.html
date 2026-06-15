@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js files/theme.js"></script>
+    <title>CITIHUB DORMITORY</title>
+    <link rel="stylesheet" href="../css files/main.css">
+    <link rel="stylesheet" href="../css files/booking.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="../js files/page-loader.js" defer></script>
+  
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+
+<!-- Terms Modal --><div id="terms-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:white; border-radius:16px; padding:32px; max-width:550px; width:90%; max-height:85vh; overflow-y:auto; position:relative;">
+        <h2 style="margin-bottom:16px; color:#1a6b3a;">Terms & Privacy Consent</h2>
+        
+        <div style="font-size:13px; color:#6b7280; line-height:1.6;">
+            <p>Welcome to <strong>CitiHub Dormitory</strong>. By proceeding, you agree to the following house rules and data privacy policies:</p>
+
+            <strong style="color:#374151;">I. DORMITORY HOUSE RULES</strong><br>
+            <ul style="padding-left:18px; margin-top:8px;">
+                <li><strong>Keep Doors Closed:</strong> Maintain privacy and security at all times.</li>
+                <li><strong>Visitor Policy:</strong> Visitors stay in designated common areas only; not allowed in tenant rooms.</li>
+                <li><strong>No Sharing of Beds:</strong> One bed space per registered resident only.</li>
+                <li><strong>Smoking:</strong> Strictly prohibited inside rooms or common spaces.</li>
+                <li><strong>Dress Code:</strong> Proper clothing/towel covering required in shared spaces.</li>
+                <li><strong>Noise & Conduct:</strong> No loud noises. Bullying, harassment, or foul words are strictly prohibited.</li>
+                <li><strong>No Hanging:</strong> Do not hang clothes in common areas to keep them orderly.</li>
+                <li><strong>Prohibited Substances:</strong> No alcohol, illegal drugs, or weapons. Violation results in IMMEDIATE TERMINATION.</li>
+                <li><strong>No Personal Cooking:</strong> Not allowed inside rooms or common areas for fire safety.</li>
+                <li><strong>No Pets:</strong> Only CitiHub-approved pets are allowed.</li>
+                <li><strong>Allowed Appliances:</strong> Laptops/phones/tablets only. High-wattage items (kettles, rice cookers) are prohibited.</li>
+            </ul>
+
+            <hr style="border:0; border-top:1px solid #eee; margin:16px 0;">
+
+            <strong style="color:#374151;">II. DATA PRIVACY CONSENT (RA 10173)</strong><br>
+            <p style="margin-top:8px;">
+                We collect your personal info and residency requirements to process your application and send billing notifications. Your data is stored securely in our database and will be handled according to the Data Privacy Act of 2012.
+            </p>
+        </div>
+
+        <button onclick="document.getElementById('terms-modal').style.display='none'" 
+                style="margin-top:20px; width:100%; padding:14px; background:#1a6b3a; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold; font-size:14px;">
+            I Understand & Consent
+        </button>
+    </div>
+</div>
+
+<body data-loader-mode="manual">
+
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+    <div class="page-loading-box">
+        <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+        <div class="page-loading-spinner"></div>
+        <div class="page-loading-title">Checking your dashboard</div>
+        <p class="page-loading-text">Please wait while we load your tenant status, announcements, and booking access.</p>
+    </div>
+</div>
+
+    <!-- BILLING BANNER -->
+    <div class="billing-banner" id="billingBanner" style="display:none;">
+        <div class="banner-left">
+            <div class="icon-circle" id="billingBannerIcon">!</div>
+            <div>
+                <div class="title" id="billingBannerTitle">Billing Reminder</div>
+                <div class="subtitle" id="billingBannerSubtitle">Your latest billing update will appear here.</div>
+            </div>
+        </div>
+        <div class="banner-right">
+            <button class="close-btn">&times;</button>
+            <button class="pay-btn" id="billingBannerPayBtn">&#128179; Pay Now</button>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <img src="../images/logo.png" class="logo-icon" alt="CitiHub Logo">
+            <div class="logo-text">
+                <div class="name">CITIHUB DORMITORY</div>
+                <div class="address">&#128205; 1st St, Santa Mesa, Manila, Metro Manila</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="tenant-notif-wrap">
+                <button class="notif-btn" id="tenantNotifBtn" type="button" aria-label="Open notifications">
+                    &#128276;
+                    <span class="notif-badge" id="tenantNotifBadge" style="display:none;"></span>
+                </button>
+                <div class="tenant-notif-panel" id="tenantNotifPanel">
+                    <div class="tenant-notif-header">
+                        <div>
+                            <div class="tenant-notif-title">Notifications</div>
+                            <div class="tenant-notif-sub" id="tenantNotifSub">Latest updates from CitiHub</div>
+                        </div>
+                    </div>
+                    <div class="tenant-notif-list" id="tenantNotifList">
+                        <div class="tenant-notif-empty">No notifications yet.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="welcome" id="welcome-logger"></div>
+                <div class="room"></div>
+            </div>
+            <div class="avatar-container">
+                <div class="avatar">U</div>
+                <div class="avatar-dropdown">
+                    <a href="../pages/payment.html" class="dropdown-item" data-action="payment">Payments</a>
+                    <a href="../pages/settings.html" class="dropdown-item" data-action="settings">Settings</a>
+                    <a href="../pages/userprofile.html" class="dropdown-item" data-action="profile">Profile</a>
+                    <a href="#" class="dropdown-item" id="btnLogout" data-action="logout">Log Out</a>
+                    <a href="#" class="dropdown-item" data-action="terms">Terms & Conditions</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+        <h1 class="section-title" id="bookingSectionTitle" style="display:none;">Room Booking &amp; Availability</h1>
+        <p class="section-sub" id="bookingSectionSub" style="display:none;">Choose your preferred room type. Each room has 22 available bedspaces.</p>
+
+        <!-- ROOM CARDS -->
+        <div class="rooms-grid" id="bookingRoomsGrid" style="display:none;">
+            <!-- Standard Room -->
+            <div class="room-card">
+                <div class="room-card-hero">
+                    <span class="hero-icon">&#127744;</span>
+                    <span class="available-badge">Available</span>
+                </div>
+                <div class="room-card-body">
+                    <div class="room-header">
+                        <div>
+                            <div class="room-name">Fan Room</div>
+                            <div class="room-type">Non-Air Conditioned</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div class="room-price">&#8369;1,900</div>
+                            <div class="per-month">from / month</div>
+                        </div>
+                    </div>
+                    <div class="amenities">
+                        <span class="amenity-tag">&#127744; Electric Fan</span>
+                        <span class="amenity-tag">&#128161; Lighting</span>
+                        <span class="amenity-tag">&#128703; Shared CR</span>
+                        <span class="amenity-tag">&#9889; Utilities incl.</span>
+                    </div>
+                    <table class="lease-table">
+                        <thead>
+                            <tr><th>Lease Term</th><th>Monthly Rate</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1 - 5 Months</td><td class="lease-price">&#8369;3,600</td></tr>
+                            <tr><td>6 - 11 Months</td><td class="lease-price">&#8369;2,893</td></tr>
+                            <tr><td>1 Year</td><td class="lease-price">&#8369;1,900</td></tr>
+                        </tbody>
+                    </table>
+                    <button class="book-btn" disabled onclick="window.location.href='../pages/booking.html?type=Standard'">&#128197; Book This Room</button>
+                </div>
+            </div>
+
+            <!-- Premium Room -->
+            <div class="room-card">
+                <div class="room-card-hero teal">
+                    <span class="hero-icon teal-icon">&#10052;&#65039;</span>
+                    <span class="available-badge teal">Available</span>
+                </div>
+                <div class="room-card-body">
+                    <div class="room-header">
+                        <div>
+                            <div class="room-name">Aircon Room</div>
+                            <div class="room-type teal">Air Conditioned</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div class="room-price teal">&#8369;2,500</div>
+                            <div class="per-month">from / month</div>
+                        </div>
+                    </div>
+                    <div class="amenities">
+                        <span class="amenity-tag teal">&#10052;&#65039; Aircon</span>
+                        <span class="amenity-tag teal">&#128246; WiFi</span>
+                        <span class="amenity-tag teal">&#128703; Shared CR</span>
+                        <span class="amenity-tag teal">&#9889; Utilities incl.</span>
+                    </div>
+                    <table class="lease-table teal">
+                        <thead>
+                            <tr><th>Lease Term</th><th>Monthly Rate</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1 - 5 Months</td><td class="lease-price teal">&#8369;5,075</td></tr>
+                            <tr><td>6 - 11 Months</td><td class="lease-price teal">&#8369;4,095</td></tr>
+                            <tr><td>1 Year</td><td class="lease-price teal">&#8369;2,500</td></tr>
+                        </tbody>
+                    </table>
+                    <button class="book-btn teal" disabled onclick="window.location.href='../pages/booking.html?type=Premium'">&#128197; Book This Room</button>
+                </div>
+            </div>
+        </div>
+        <section class="transient-card">
+            <div>
+                <div class="transient-eyebrow">Daily Stay</div>
+                <h2>Transient Bed</h2>
+                <p>Need a bedspace for one day or more? Book a short stay with full upfront payment: PHP 250/day for Standard and PHP 500/day for Premium.</p>
+            </div>
+            <a href="../pages/transient-bed.html" class="transient-btn">Book Transient Bed</a>
+        </section>
+        <!-- uupdaterequest -->
+        <div id="requestStatusBox" class="request-status"></div>
+        <!-- BULLETIN BOARD / ANNOUNCEMENTS -->
+        <div class="bulletin-section" id="bulletinSection" style="display:none;">
+            <div class="bulletin-header">
+                <div class="bulletin-header-left">
+                    <div class="bulletin-header-icon">&#128203;</div>
+                    <div>
+                        <div class="bulletin-title">Bulletin Board</div>
+                        <div class="bulletin-sub">Official announcements from CitiHub Dormitory management</div>
+                    </div>
+                </div>
+                <button class="bulletin-toggle-btn" id="bulletinToggleBtn" type="button" aria-expanded="true">
+                    Minimize
+                </button>
+            </div>
+            <div class="bulletin-list" id="bulletinList">
+               <!-- anouncements here -->
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card stat-card-clickable" id="occupantsStatCard" role="button" tabindex="0" aria-label="View current occupants" style="display:none;">
+                <div class="stat-icon green">&#128101;</div>
+                <div>
+                    <div class="stat-label">Total Occupants</div>
+                    <div class="stat-value" id="totalOccupantsStat">Loading...</div>
+                    <div class="stat-subtle" id="totalOccupantsHint">Tap to view current tenants</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue">&#128197;</div>
+                <div>
+                    <div class="stat-label">Next Payment</div>
+                    <div class="stat-value" id="nextPaymentStat">--</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">&#128737;&#65039;</div>
+                <div>
+                    <div class="stat-label">Room Status</div>
+                    <div class="stat-value active">Active</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="occupants-modal-overlay" id="occupantsModal">
+            <div class="occupants-modal-card" role="dialog" aria-modal="true" aria-labelledby="occupantsModalTitle">
+                <div class="occupants-modal-header">
+                    <div>
+                        <div class="occupants-modal-title" id="occupantsModalTitle">Current Occupants</div>
+                        <div class="occupants-modal-sub" id="occupantsModalSub">Approved tenants currently occupying bedspaces in CitiHub Dormitory.</div>
+                    </div>
+                    <button class="occupants-modal-close" type="button" id="occupantsModalClose" aria-label="Close occupants list">&times;</button>
+                </div>
+                <div class="occupants-modal-list" id="occupantsModalList">
+                    <div class="occupants-empty">Loading occupants...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="billing-section" id="ratingSection" style="display:none; margin-bottom:28px;">
+            <div class="billing-header">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span class="bh-icon">&#11088;</span> Rate Your Stay
+                </div>
+                <div class="rating-header-actions">
+                    <div class="bi-sub" id="ratingUpdatedText">Share your feedback with CitiHub management.</div>
+                    <button class="rating-dismiss-btn" id="ratingDismissBtn" type="button" aria-label="Dismiss rate your stay card">&times;</button>
+                </div>
+            </div>
+            <div style="padding:18px 22px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px;" class="rating-grid">
+                <div class="modal-field">
+                    <label class="modal-label" for="overallRating">Overall Rating</label>
+                    <input id="overallRating" type="hidden" value="">
+                    <div class="rating-stars" data-group="overallRating" role="radiogroup" aria-label="Overall Rating">
+                        <button type="button" class="rating-star" data-value="1" aria-label="1 star">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="2" aria-label="2 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="3" aria-label="3 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="4" aria-label="4 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="5" aria-label="5 stars">&#9733;</button>
+                    </div>
+                    <div class="rating-caption" id="overallRatingLabel">Select a rating</div>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label" for="roomRating">Room Comfort</label>
+                    <input id="roomRating" type="hidden" value="">
+                    <div class="rating-stars" data-group="roomRating" role="radiogroup" aria-label="Room Comfort">
+                        <button type="button" class="rating-star" data-value="1" aria-label="1 star">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="2" aria-label="2 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="3" aria-label="3 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="4" aria-label="4 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="5" aria-label="5 stars">&#9733;</button>
+                    </div>
+                    <div class="rating-caption" id="roomRatingLabel">Select a rating</div>
+                </div>
+                <div class="modal-field">
+                    <label class="modal-label" for="serviceRating">Admin Service</label>
+                    <input id="serviceRating" type="hidden" value="">
+                    <div class="rating-stars" data-group="serviceRating" role="radiogroup" aria-label="Admin Service">
+                        <button type="button" class="rating-star" data-value="1" aria-label="1 star">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="2" aria-label="2 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="3" aria-label="3 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="4" aria-label="4 stars">&#9733;</button>
+                        <button type="button" class="rating-star" data-value="5" aria-label="5 stars">&#9733;</button>
+                    </div>
+                    <div class="rating-caption" id="serviceRatingLabel">Select a rating</div>
+                </div>
+            </div>
+            <div style="padding:0 22px 18px;">
+                <div class="modal-field">
+                    <label class="modal-label" for="ratingComment">Comment</label>
+                    <textarea id="ratingComment" class="modal-textarea" rows="4" placeholder="Share your experience with the room, support, and overall stay."></textarea>
+                </div>
+            </div>
+            <div style="padding:0 22px 22px; display:flex; justify-content:flex-end;">
+                <button class="rating-submit-btn" id="ratingSubmitBtn" type="button">Submit Feedback</button>
+            </div>
+        </div>
+
+        <div class="renewal-section" id="renewalSection" style="display:none;">
+            <div class="renewal-copy">
+                <div class="renewal-eyebrow">Contract Renewal</div>
+                <h2 id="renewalTitle">Renew your stay</h2>
+                <p id="renewalSub">Keep your current profile and request a continuous contract renewal for admin review.</p>
+            </div>
+            <div class="renewal-actions">
+                <select id="renewalTermSelect" class="renewal-select" aria-label="Renewal contract term">
+                    <option value="1_5_months">1 - 5 Months</option>
+                    <option value="6_11_months">6 - 11 Months</option>
+                    <option value="1_year">1 Year</option>
+                </select>
+                <button type="button" class="renewal-btn" id="renewalSubmitBtn">Request Renewal</button>
+            </div>
+        </div>
+
+        <!-- BILLING ACTIVITY -->
+        <div class="billing-section">
+            <div class="billing-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="bh-icon">&#128203;</span> Recent Billing Activity
+                </div>
+               <a href="../pages/payment.html" class="add-notif-btn" id="openBillingBtn" data-secure-billing-link="true">Open Billing</a>
+            </div>
+            <div id="billingActivityList">
+                <div class="billing-item">
+                    <div class="bi-left">
+                        <span class="bi-status-icon">&#128179;</span>
+                        <div>
+                            <div class="bi-title">Loading billing activity...</div>
+                            <div class="bi-sub">Please wait while your billing summary is prepared.</div>
+                        </div>
+                    </div>
+                    <div class="bi-amount">--</div>
+                </div>
+            </div>
+        </div>
+        <section class="complaint-card" id="complaintCard" style="display:none;">
+            <div>
+                <div class="complaint-eyebrow">Tenant Safety</div>
+                <h2>Report Co-tenant Concern</h2>
+                <p>Approved tenants can submit a formal report for rule violations, suspicious behavior, harassment, noise, prohibited items, or safety concerns.</p>
+            </div>
+            <a href="../pages/complaints.html" class="complaint-btn">File Report</a>
+        </section>
+        <div id="spaces-count-standard" style="display:none;"></div>
+        <div id="spaces-count-premium" style="display:none;"></div>
+    </main>
+    <div class="chatbot tenant-chatbot">
+        <button class="chatbot-toggle" id="tenantChatToggle" type="button">
+            Message Admin
+        </button>
+
+        <div class="chatbot-panel" id="tenantChatPanel">
+            <div class="chatbot-header">
+                <div>
+                    <strong>CitiHub Support</strong>
+                    <div class="chatbot-subtitle" id="tenantChatSubtitle">Message the admin team in real time</div>
+                </div>
+                <button class="chatbot-close" id="tenantChatClose" type="button">&times;</button>
+            </div>
+
+            <div class="chatbot-messages" id="tenantChatMessages">
+                <div class="chatbot-message bot">
+                    Welcome to CitiHub support. You can send a message to the admin here.
+                </div>
+            </div>
+
+            <form class="chatbot-input-row" id="tenantChatForm">
+                <input
+                    type="text"
+                    id="tenantChatInput"
+                    class="chatbot-input"
+                    placeholder="Type your message to admin..."
+                    autocomplete="off"
+                >
+                <button type="submit" class="chatbot-send" id="tenantChatSendBtn">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="chatbot tenant-maintenance-chatbot" id="tenantMaintenanceWidget" style="display:none;">
+        <button class="chatbot-toggle maintenance-toggle" id="maintenanceToggle" type="button">
+            Maintenance
+        </button>
+
+        <div class="chatbot-panel maintenance-popup" id="maintenanceSection">
+            <div class="chatbot-header maintenance-header">
+                <div>
+                    <strong>Maintenance & Concerns</strong>
+                    <div class="chatbot-subtitle" id="maintenanceSectionNote">Report room issues or concerns directly to CitiHub management.</div>
+                </div>
+                <button class="chatbot-close" id="maintenanceClose" type="button">&times;</button>
+            </div>
+
+            <div class="maintenance-popup-body">
+                <div class="maintenance-form-wrap">
+                    <div class="maintenance-form-head">
+                        <div class="maintenance-form-title">Submit a ticket</div>
+                        <div class="maintenance-form-sub">Describe the issue clearly so the admin team can respond faster.</div>
+                    </div>
+                    <div class="maintenance-form-grid">
+                        <div class="modal-field">
+                            <label class="modal-label" for="maintenanceCategory">Category</label>
+                            <select id="maintenanceCategory" class="modal-select">
+                                <option value="plumbing">Plumbing</option>
+                                <option value="electrical">Electrical</option>
+                                <option value="cleanliness">Cleanliness</option>
+                                <option value="security">Security</option>
+                                <option value="noise">Noise</option>
+                                <option value="internet">Internet</option>
+                                <option value="furniture">Furniture</option>
+                                <option value="other">Other Concern</option>
+                            </select>
+                        </div>
+                        <div class="modal-field">
+                            <label class="modal-label" for="maintenancePriority">Priority</label>
+                            <select id="maintenancePriority" class="modal-select">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label" for="maintenanceSubject">Subject</label>
+                        <input id="maintenanceSubject" class="modal-input" type="text" maxlength="90" placeholder="Example: Leaking faucet near my bed">
+                    </div>
+                    <div class="modal-field">
+                        <label class="modal-label" for="maintenanceDescription">Description</label>
+                        <textarea id="maintenanceDescription" class="modal-textarea" rows="4" maxlength="500" placeholder="Describe the issue, location, and when it started."></textarea>
+                    </div>
+                    <div class="maintenance-form-actions">
+                        <button class="rating-submit-btn maintenance-submit-btn" id="maintenanceSubmitBtn" type="button">Submit Ticket</button>
+                    </div>
+                </div>
+                <div class="maintenance-list-wrap">
+                    <div class="maintenance-list-head">
+                        <div class="maintenance-form-title">Your recent tickets</div>
+                        <div class="maintenance-form-sub">Track the latest updates from the admin team.</div>
+                    </div>
+                    <div class="maintenance-list" id="maintenanceList">
+                        <div class="maintenance-empty">No maintenance tickets yet. Your submitted concerns will appear here.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="billing-security-modal" id="billingSecurityModal" aria-hidden="true">
+        <div class="billing-security-card" role="dialog" aria-modal="true" aria-labelledby="billingSecurityTitle">
+            <button type="button" class="billing-security-close" id="billingSecurityClose" aria-label="Close billing security check">&times;</button>
+            <div class="billing-security-icon">&#128274;</div>
+            <h2 id="billingSecurityTitle">Confirm Billing Access</h2>
+            <p id="billingSecurityMessage">For your security, confirm your account before viewing billing and payment details.</p>
+
+            <form id="billingPasswordForm" class="billing-security-form" style="display:none;">
+                <label class="modal-label" for="billingSecurityPassword">Account Password</label>
+                <input id="billingSecurityPassword" class="modal-input" type="password" autocomplete="current-password" placeholder="Enter your CitiHub password">
+                <button type="submit" class="billing-security-primary" id="billingPasswordSubmit">Unlock Billing</button>
+            </form>
+
+            <button type="button" class="billing-security-primary" id="billingGoogleSubmit" style="display:none;">Continue with Google</button>
+            <div class="billing-security-error" id="billingSecurityError" role="alert"></div>
+            <div class="billing-security-note">Billing stays unlocked for 5 minutes after successful confirmation.</div>
+        </div>
+    </div>
+
+    <script src="../../shared/api-config.js"></script>
+    <script src="../js files/firebase-init.js"></script>
+    <script type="module" src="../js files/main.js"></script>
+    <div class="toast" id="toast"></div>
+
+
+</body>
+</html>
+

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITIHUB</title>
+
+    <link rel="stylesheet" href="../css files/intro.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <script src="../js files/page-loader.js" defer></script>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <style>
+        .toast {
+            position: fixed;
+            right: 28px;
+            bottom: 28px;
+            z-index: 9999;
+            max-width: min(360px, calc(100vw - 32px));
+            background: #111827;
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.22s ease, transform 0.22s ease;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btnLogin.is-loading {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            opacity: 0.82;
+            cursor: wait;
+        }
+
+        .btn-loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.55);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: btnSpin 0.75s linear infinite;
+        }
+
+        @keyframes btnSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .toast {
+                right: 16px;
+                left: 16px;
+                bottom: 16px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+    <div class="page-loading-box">
+        <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+        <div class="page-loading-spinner"></div>
+        <div class="page-loading-title">Opening reset page</div>
+        <p class="page-loading-text">Please wait while we prepare your password recovery form.</p>
+    </div>
+</div>
+
+<form id="resetForm"> <!--  IMPORTANT -->
+    <div class="wrapper">
+        <div class="heade">
+            <img src="../images/logo.png" width="60">
+            <p><span>CITIHUB</span></p>
+        </div>
+
+        <div class="div-move">
+            <h2 class="title-login">RECOVER PASSWORD</h2>
+
+            <div class="input-box">
+                <box-icon type='solid' name='user'></box-icon>
+                <input type="email" id="resetEmail" placeholder="Enter your email" required>
+            </div>
+
+            <!--  submit button -->
+            <button type="submit" class="btnLogin">Send Reset Email</button>
+
+            <p class="btn-signup">
+                Already have an account? <a href="intro.html">Log in here</a>
+            </p>
+        </div>
+    </div>
+</form>
+<div class="toast" id="toast"></div>
+   <script src="../js files/firebase-init.js"></script>
+<script src="../js files/forgot-pass.js"></script>
+
+</body>
+</html>

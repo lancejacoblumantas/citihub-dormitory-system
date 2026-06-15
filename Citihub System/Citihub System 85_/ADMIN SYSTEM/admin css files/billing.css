@@ -1,0 +1,267 @@
+.billing-filter-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 18px 20px 20px;
+}
+
+.billing-search {
+    flex: 1 1 280px;
+}
+
+.billing-table-caption {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.billing-empty-cell {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 28px 16px !important;
+}
+
+.billing-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-pill.paid {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-pill.failed {
+    background: var(--red-bg);
+    color: #b91c1c;
+}
+
+.status-pill.cancelled {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.status-pill.pending,
+.status-pill.unpaid {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-pill.deducted {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-pill.gateway {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.invoice-type-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    white-space: nowrap;
+}
+
+.invoice-period {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.invoice-account-row {
+    cursor: pointer;
+}
+
+.invoice-account-row.expanded td {
+    border-bottom-color: transparent;
+}
+
+.invoice-account-row .invoice-account-toggle {
+    min-width: 104px;
+}
+
+.invoice-account-details-row td {
+    padding: 0 16px 16px !important;
+    background: var(--bg);
+}
+
+.invoice-account-details {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+}
+
+.invoice-account-details-title {
+    padding: 12px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.invoice-detail-table-wrap {
+    overflow-x: auto;
+}
+
+.invoice-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.invoice-detail-table th {
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: var(--bg);
+    white-space: nowrap;
+}
+
+.invoice-detail-table td {
+    padding: 11px 12px;
+    border-top: 1px solid var(--border);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.method-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+}
+
+.method-pill.card {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.method-pill.gcash {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.method-pill.maya {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.method-pill.grab-pay {
+    background: #eef2ff;
+    color: #4338ca;
+}
+
+.method-pill.shopeepay {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.method-pill.qrph {
+    background: #f0fdfa;
+    color: #0f766e;
+}
+
+.method-pill.online-banking {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.method-pill.billease {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.billing-modal {
+    max-width: 660px;
+}
+
+.billing-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.billing-detail-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 15px;
+}
+
+.billing-detail-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 5px;
+}
+
+.billing-detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.billing-detail-value.muted {
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.billing-detail-link {
+    color: var(--green);
+    text-decoration: none;
+}
+
+.billing-detail-link:hover {
+    text-decoration: underline;
+}
+
+.billing-empty-state {
+    padding: 22px 6px;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.billing-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .billing-header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .billing-header-actions .download-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .billing-modal-grid {
+        grid-template-columns: 1fr;
+    }
+}

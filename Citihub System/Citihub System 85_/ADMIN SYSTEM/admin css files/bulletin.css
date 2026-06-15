@@ -1,0 +1,27 @@
+/* =============================
+   CitiHub Admin — Bulletin Board
+   Requires: admin-base.css
+   ============================= */
+
+/* ══ BULLETIN BOARD ══ */
+.bulletin-admin-list { padding: 0; }
+.bulletin-admin-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.bulletin-admin-item:last-child { border-bottom: none; }
+.bulletin-admin-item:hover { background: var(--bg); }
+.bulletin-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.dot-urgent { background: #ef4444; box-shadow: 0 0 0 3px #fee2e2; }
+.dot-info   { background: var(--green-light); box-shadow: 0 0 0 3px #d1fae5; }
+.dot-notice { background: var(--amber); box-shadow: 0 0 0 3px #fef3c7; }
+.bulletin-content { flex: 1; min-width: 0; }
+.bulletin-item-title { font-weight: 600; font-size: 14px; }
+.bulletin-item-body  { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.55; }
+.bulletin-meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+.bulletin-badge { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; }
+.badge-urgent  { background: #fee2e2; color: #b91c1c; }
+.badge-general { background: #d1fae5; color: #065f46; }
+.badge-notice  { background: #fef3c7; color: #92400e; }
+.bulletin-date { font-size: 11px; color: var(--text-muted); }
+.bulletin-actions { flex-shrink: 0; }
+.hidden-page {
+  visibility: hidden; /* keeps layout but hides content */
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+       if (localStorage.getItem("loggedIn") === "true")window.location.href = "main.html";
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITIHUB</title>
+    <link rel="stylesheet" href="../css files/intro.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <script src="../js files/page-loader.js" defer></script>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <style>
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0.85;
+            cursor: wait;
+        }
+
+        .btn-loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: btn-spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes btn-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+   
+    </script>
+      
+    <link rel="shortcut icon" href="../images/citihub.png" type="image/x-icon">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+    <div class="page-loading-box">
+        <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+        <div class="page-loading-spinner"></div>
+        <div class="page-loading-title">Loading welcome screen</div>
+        <p class="page-loading-text">Please wait while we prepare the sign in page.</p>
+    </div>
+</div>
+    <form action="" id="loginForm"> 
+         <div class="wrapper">
+        <div class="heade">
+            <img src="../images/logo.png" alt="LOGO" class="logo" width="60px" height="60px">
+            <p><span>CITIHUB</span></p>
+        </div>
+        <div class="div-move" id="div-move">
+            <h2 class="title-login">Log In</h2>
+            
+            <div class="input-box" id="input-username">
+                <box-icon type='solid' name='user'></box-icon>
+                <input type="text" name="username" id="loginUsername" placeholder="Username" required autocomplete="username">
+            </div>
+            <div class="input-box" id="input-password">   
+                <box-icon type='solid' name='lock-alt' class="imgLock" title="Show Password" id="logoPassword" onclick="togglePasswordVisibility()"></box-icon>
+                <input type="password" id="loginPassword" name="password" placeholder="Password" required autocomplete="current-password">
+            </div>
+            
+            <div class="login-options">
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember Me</label>
+                </div>
+                <a href="forgot-pass.html" class="forgot-password">Forgot Password?</a>
+            </div>
+            
+            <button type="submit" class="btnLogin" id="btnLogin">Log In</button>
+            <a href="homepage.html" class="btnHomePage">Go to Homepage</a>
+                          
+            <div class="sign-up-link"></div>
+             <button type="button" id="googleLoginBtn" class="google-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png" width="20">
+    Continue with Google
+</button>
+            <p class="btn-signup">Don't have an account? <a href="register.html"> Register here</a></p>
+          
+        </div>
+        
+    </div>
+   
+    </form>
+<div class="app-toast" id="appPopup" aria-live="polite" aria-atomic="true">
+    <div class="app-toast-icon" id="popupIcon">i</div>
+    <div class="app-toast-content">
+        <div class="app-toast-title" id="popupTitle">Notice</div>
+        <div class="app-toast-message" id="popupMessage">Message goes here.</div>
+    </div>
+    <button type="button" class="app-toast-close" id="popupConfirm" aria-label="Dismiss notification">x</button>
+    <button type="button" id="popupCancel" hidden></button>
+</div>
+
+           <script src="../js files/firebase-init.js"></script>
+      <script  src="../js files/intro.js"></script>
+   
+</body>
+</html>

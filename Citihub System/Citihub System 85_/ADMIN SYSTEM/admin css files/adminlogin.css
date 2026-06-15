@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+html, body {
+    height: 100%;
+    background: url(../images/bg.jpg) no-repeat center center/cover;
+}
+
+/* Center everything */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Logo/Header */
+.heade {
+    display: grid;
+    place-items: center;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.heade p span {
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+/* Main container */
+.wrapper {
+    width: 350px;
+    padding: 35px 30px;
+    border-radius: 15px;
+    
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    
+    color: #000;
+}
+
+/* Title */
+.wrapper h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+/* Input container */
+.input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 12px 0;
+}
+
+/* Input fields */
+.input-box input {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px; 
+    border: 2px solid rgba(0,0,0,0.3);
+    outline: none;
+    
+    background: rgba(255,255,255,0.6);
+    padding: 0 45px 0 15px;
+    font-size: 15px;
+
+    transition: 0.3s;
+}
+
+/* Input focus effect */
+.input-box input:focus {
+    border-color: #007bff;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(0,123,255,0.3);
+}
+
+/* Placeholder */
+.input-box input::placeholder {
+    color: #555;
+}
+
+/* Icons */
+box-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+/* Options */
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+/* Remember me */
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Forgot password */
+.forgot-password {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Login button */
+.btnLogin {
+    width: 100%;
+    height: 45px;
+    border: none;
+    border-radius: 30px;
+    
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Button hover */
+.btnLogin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,123,255,0.4);
+}
+
+/* Signup text */
+.btn-signup {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.btn-signup a {
+    color: #007bff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.btn-signup a:hover {
+    text-decoration: underline;
+}
+
+/* Animation container */
+.div-move {
+    transition: 0.3s ease;
+}
+.google-btn {
+    width: 100%;
+    height: 45px;
+    margin-top: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    border-radius: 6px;
+    border: 1px solid #ddd;
+
+    background: #ffffff;
+    color: #444;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Logo */
+.google-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Hover */
+.google-btn:hover {
+    background: #f5f5f5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+/* Click */
+.google-btn:active {
+    transform: scale(0.97);
+}
+
+.btnLogin:disabled,
+.google-btn:disabled {
+    opacity: 0.62;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .wrapper {
+        width: 90%;
+        padding: 25px 20px;
+    }
+
+    .wrapper h2 {
+        font-size: 24px;
+    }
+
+    .input-box input {
+        font-size: 14px;
+    }
+}

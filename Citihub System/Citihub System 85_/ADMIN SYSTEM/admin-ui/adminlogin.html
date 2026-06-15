@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITIHUB</title>
+   <link rel="stylesheet" href="../admin css files/adminlogin.css">
+   <link rel="stylesheet" href="../admin css files/page-loader.css">
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+   
+    </script>
+          <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+    <script src="../admin js/page-loader.js" defer></script>
+  
+    <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
+</head>
+<body>
+    <div class="page-loading-overlay" id="pageLoadingOverlay">
+        <div class="page-loading-box">
+            <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+            <div class="page-loading-spinner"></div>
+            <div class="page-loading-title">Opening admin login</div>
+            <p class="page-loading-text">Please wait while we prepare the sign in page.</p>
+        </div>
+    </div>
+    <form action="" id="loginForm"> 
+         <div class="wrapper">
+        <div class="heade">
+            <img src="../images/logo.png" alt="LOGO" class="logo" width="60px" height="60px">
+            <p><span>CITIHUB</span></p>
+        </div>
+        <div class="div-move" id="div-move">
+            <h2 class="title-login">Log In</h2>
+            
+            <div class="input-box" id="input-username">
+                <box-icon type='solid' name='user'></box-icon>
+                <input type="text" name="username" id="loginUsername" placeholder="Username or Email" required autocomplete="username">
+            </div>
+            <div class="input-box" id="input-password">   
+                <box-icon type='solid' name='lock-alt' class="imgLock" title="Show Password" id="logoPassword" onclick="togglePasswordVisibility()"></box-icon>
+                <input type="password" id="loginPassword" name="password" placeholder="Password" required autocomplete="current-password">
+            </div>
+            
+            <div class="login-options">
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember Me</label>
+                </div>
+                <a href="#" class="forgot-password">Forgot Password?</a>
+            </div>
+            
+            <button type="submit" class="btnLogin" id="btnLogin">Log In</button>
+            <button type="button" id="googleLoginBtn" class="google-btn">
+    <img src="https://developers.google.com/identity/images/g-logo.png" width="20">
+    Continue with Google
+</button>
+           
+        </div>
+    </div>
+    
+    </form>
+     <script src="../admin js/firebase-init.js"></script>
+    <script src="../admin js/ui-feedback.js"></script>
+      <script  src="../admin js/adminlogin.js"></script>
+</body>
+</html>

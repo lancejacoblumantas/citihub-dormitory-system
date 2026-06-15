@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CITIHUB - Accounts</title>
+    <link rel="stylesheet" href="../admin css files/admin-base.css">
+    <link rel="stylesheet" href="../admin css files/accounts.css">
+    <link rel="stylesheet" href="../admin css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../admin js/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+<body class="hidden-page" data-loader-mode="manual">
+    <div class="page-loading-overlay" id="pageLoadingOverlay">
+        <div class="page-loading-box">
+            <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+            <div class="page-loading-spinner"></div>
+            <div class="page-loading-title">Loading accounts</div>
+            <p class="page-loading-text">Please wait while we verify admin access and load registered accounts.</p>
+        </div>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="../images/logo.png" class="sidebar-logo" alt="CitiHub Logo">
+            <div class="sidebar-brand-text">
+                <div class="sidebar-name">CITIHUB</div>
+                <div class="sidebar-role">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group-label">Main</div>
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">&#127968;</span> Dashboard</a>
+            <a href="tenants.html" class="nav-item"><span class="nav-icon">&#128101;</span> Tenants</a>
+            <a href="accounts.html" class="nav-item active"><span class="nav-icon">&#128100;</span> Accounts</a>
+            <a href="bookings.html" class="nav-item"><span class="nav-icon">&#128229;</span> Online Bookings <span class="nav-badge"></span></a>
+            <a href="transient-beds.html" class="nav-item"><span class="nav-icon">&#127976;</span> Transient Beds <span class="nav-badge"></span></a>
+            <a href="rooms.html" class="nav-item"><span class="nav-icon">&#128719;</span> Rooms</a>
+            <a href="billing.html" class="nav-item"><span class="nav-icon">&#128179;</span> Billing <span class="nav-badge"></span></a>
+            <a href="reports.html" class="nav-item"><span class="nav-icon">&#128202;</span> Reports</a>
+            <div class="nav-group-label">Communication</div>
+            <a href="bulletin.html" class="nav-item"><span class="nav-icon">&#128203;</span> Bulletin Board</a>
+            <a href="messages.html" class="nav-item"><span class="nav-icon">&#128172;</span> Messages <span class="nav-badge"></span></a>
+            <a href="maintenance.html" class="nav-item"><span class="nav-icon">&#128295;</span> Maintenance</a>
+            <a href="complaints.html" class="nav-item"><span class="nav-icon">&#128680;</span> Complaints <span class="nav-badge"></span></a>
+            <div class="nav-group-label">System</div>
+            <a href="admin-history.html" class="nav-item"><span class="nav-icon">&#128338;</span> Admin History</a>
+            <a href="settings.html" class="nav-item"><span class="nav-icon">&#9881;&#65039;</span> Settings</a>
+            <a href="#" class="nav-item logout" id="btnLogout"><span class="nav-icon">&#8617;</span> Log Out</a>
+        </nav>
+    </aside>
+
+    <div class="main-wrap">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleAdminSidebar()">&#9776;</button>
+                <div class="topbar-title">Accounts</div>
+            </div>
+            <div class="topbar-right">
+                <div class="admin-info">
+                    <div class="admin-welcome">Welcome, Admin</div>
+                    <div class="admin-role">Super Admin</div>
+                </div>
+                <div class="avatar-container">
+                    <div class="avatar">AD</div>
+                    <div class="avatar-dropdown">
+                        <a href="settings.html" class="dropdown-item">Settings</a>
+                        <a href="#" class="dropdown-item" id="topbarLogoutBtn">Log Out</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Created Accounts</h1>
+                        <p class="page-sub">View every registered account, including users with no booking request yet.</p>
+                    </div>
+                    <button class="download-btn" id="exportAccountsBtn">&#11015; Download PDF</button>
+                </div>
+
+                <div class="stats-grid accounts-stats">
+                    <div class="stat-card"><div class="stat-icon green">&#128101;</div><div><div class="stat-label">Total Accounts</div><div class="stat-value" id="statTotalAccounts">0</div><div class="stat-note">All registered users</div></div></div>
+                    <div class="stat-card"><div class="stat-icon amber">&#128196;</div><div><div class="stat-label">No Request</div><div class="stat-value" id="statNoRequest">0</div><div class="stat-note">Registered only</div></div></div>
+                    <div class="stat-card"><div class="stat-icon teal">&#128719;</div><div><div class="stat-label">Monthly</div><div class="stat-value" id="statMonthly">0</div><div class="stat-note">Has monthly request</div></div></div>
+                    <div class="stat-card"><div class="stat-icon blue">&#127976;</div><div><div class="stat-label">Transient</div><div class="stat-value" id="statTransient">0</div><div class="stat-note">Has transient request</div></div></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">&#128100; All Created Accounts</div>
+                        <div class="accounts-filters">
+                            <div class="search-bar"><span>&#128269;</span><input type="text" id="accountSearch" class="search-input" placeholder="Search name, email, phone..."></div>
+                            <select class="filter-select" id="accountStatusFilter">
+                                <option value="all">All Account Status</option>
+                                <option value="registered">Registered</option>
+                                <option value="approved">Approved</option>
+                                <option value="delinquent">Delinquent</option>
+                                <option value="billing_hold">Billing Hold</option>
+                                <option value="blocked">Blocked</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <select class="filter-select" id="accountRequestFilter">
+                                <option value="all">All Request Types</option>
+                                <option value="none">No Request</option>
+                                <option value="monthly">Monthly Request</option>
+                                <option value="transient">Transient Request</option>
+                                <option value="both">Monthly + Transient</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Contact</th>
+                                    <th>Status</th>
+                                    <th>Request Summary</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountsTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="accounts-table-summary" id="accountsTableSummary">Loading accounts...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="accountModal" class="account-modal-overlay" onclick="handleAccountModalOverlay(event)">
+        <div class="account-modal">
+            <div class="account-modal-header">
+                <div>
+                    <div class="account-modal-title" id="accountModalName">Account</div>
+                    <div class="account-modal-sub" id="accountModalEmail">No email</div>
+                </div>
+                <button type="button" class="account-modal-close" onclick="closeAccountModal()">&times;</button>
+            </div>
+            <div class="account-modal-body">
+                <div class="account-detail-grid" id="accountDetailGrid"></div>
+                <div class="account-modal-section">
+                    <div class="account-section-title">Monthly Booking Records</div>
+                    <div class="account-record-list" id="accountMonthlyRecords"></div>
+                </div>
+                <div class="account-modal-section">
+                    <div class="account-section-title">Transient Bed Records</div>
+                    <div class="account-record-list" id="accountTransientRecords"></div>
+                </div>
+            </div>
+            <div class="account-modal-footer">
+                <div class="account-modal-actions">
+                    <button type="button" class="tbl-btn danger-btn" id="accountApplyBillingHoldBtn">Apply Billing Hold</button>
+                    <button type="button" class="tbl-btn" id="accountClearBillingHoldBtn">Remove Billing Hold</button>
+                </div>
+                <button type="button" class="tbl-btn" onclick="closeAccountModal()">Close</button>
+                <a href="messages.html" class="tbl-btn account-message-link">Open Messages</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="../admin js/firebase-init.js"></script>
+    <script src="../admin js/ui-feedback.js"></script>
+    <script src="../admin js/admin-auth.js"></script>
+    <script src="../admin js/admin-nav-badges.js"></script>
+    <script src="../admin js/admin-activity.js"></script>
+    <script src="../admin js/accounts.js"></script>
+</body>
+</html>
+

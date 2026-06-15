@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js files/theme.js"></script>
+    <title>Book a Bedspace - CITIHUB DORMITORY</title>
+    <link rel="stylesheet" href="../css files/booking.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../js files/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+<body data-loader-mode="manual">
+
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+    <div class="page-loading-box">
+        <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+        <div class="page-loading-spinner"></div>
+        <div class="page-loading-title">Loading available bedspaces</div>
+        <p class="page-loading-text">Please wait while we check your account and fetch the latest room availability.</p>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <img src="../images/logo.png" class="logo-icon" alt="CitiHub Logo">
+        <div class="logo-text">
+            <div class="name">CITIHUB DORMITORY</div>
+            <div class="address">1st St, Santa Mesa, Manila, Metro Manila</div>
+        </div>
+    </div>
+    <div class="header-right">
+        <a href="../pages/main.html" class="back-btn">&larr; Back to Dashboard</a>
+        <div class="user-info">
+            <div class="welcome" id="bookingWelcomeText">Welcome, Tenant</div>
+            <div class="room" id="bookingRoomText">Choose your preferred room</div>
+        </div>
+        <div class="avatar" id="bookingAvatarText">CT</div>
+    </div>
+</header>
+
+<!--  PROGRESS STRIP  -->
+<div class="progress-strip">
+    <div class="progress-banner">
+        <div class="pb-icon">
+            <img src="../images/logo.png" alt="CitiHub" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <span style="display:none;align-items:center;justify-content:center;width:100%;height:100%;color:white;font-size:18px;"></span>
+        </div>
+        <div class="pb-text">
+            <div class="pb-title">Choose Your Bedspace</div>
+            <div class="pb-sub">Review the available room types, select your preferred lease, and reserve the bedspace that best fits your stay.</div>
+        </div>
+    </div>
+    <div class="step-row">
+        <div class="step-col s-done">
+            <div class="s-circle">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                     stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+            </div>
+            <div class="s-label">Create Account</div>
+        </div>
+        <div class="step-col s-active">
+            <div class="s-circle">2</div>
+            <div class="s-label">Choose Bedspace</div>
+        </div>
+        <div class="step-col s-pending">
+            <div class="s-circle">3</div>
+            <div class="s-label">Personal Info</div>
+        </div>
+        <div class="step-col s-pending">
+            <div class="s-circle">4</div>
+            <div class="s-label">Submit</div>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<main>
+    <div class="page-header">
+        <h1>Select Your Room Type</h1>
+        <p>Browse the available bedspaces, then continue with your preferred move-in schedule and booking details.</p>
+    </div>
+
+    <div class="type-cards">
+        <div class="type-card" onclick="openModal('standard')">
+            <div class="type-card-hero green-hero">
+                <span class="hero-icon" aria-hidden="true">&#127744;</span>
+                <span class="type-badge-card green-badge">Standard</span>
+            </div>
+            <div class="type-card-body">
+                <div class="type-card-title">Fan Room</div>
+                <div class="type-card-sub">Non-Air Conditioned - from PHP 1,900/month</div>
+                <button class="open-modal-btn green-btn">Browse Bedspaces</button>
+            </div>
+        </div>
+        <div class="type-card" onclick="openModal('premium')">
+            <div class="type-card-hero teal-hero">
+                <span class="hero-icon" aria-hidden="true">&#10052;&#65039;</span>
+                <span class="type-badge-card teal-badge">Premium</span>
+            </div>
+            <div class="type-card-body">
+                <div class="type-card-title">Aircon Room</div>
+                <div class="type-card-sub">Air Conditioned - from PHP 2,500/month</div>
+                <button class="open-modal-btn teal-btn">Browse Bedspaces</button>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!--  BOOKING MODAL  -->
+<div id="bookingModal" class="modal-overlay" style="display:none;">
+    <div class="modal-panel">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div class="modal-header-left">
+                <div class="modal-title" id="modalTitle">Available Bedspaces</div>
+                <!-- Breadcrumb steps inside modal -->
+                <div class="modal-steps" id="modalSteps">
+                    <span class="ms-item active" id="ms-lease">Lease Term</span>
+                    <span class="ms-sep"></span>
+                    <span class="ms-item" id="ms-bed">Choose Bedspace</span>
+                </div>
+            </div>
+            <button class="modal-close-btn" type="button" aria-label="Close bedspace selection" onclick="closeModal()">&times;</button>
+        </div>
+
+        <!-- Scrollable body -->
+        <div class="modal-body" id="modalBody">
+
+            <!--  STEP 1: LEASE TERM  -->
+            <div id="stepLease">
+
+                <div class="lease-room-label" id="leaseRoomLabel">
+                    <span class="lrl-icon" id="lsiIcon"></span>
+                    <span id="lsiTitle">Fan Room</span>
+                    <span class="lrl-sep"></span>
+                    <span>Select your lease term</span>
+                </div>
+
+                <!-- STANDARD lease cards (shown for Fan Room) -->
+                <div class="lease-cards" id="leaseCardsStandard">
+
+                    <div class="lease-option-card" onclick="selectLease(0, this, 'standard')">
+                        <div class="loc-top">
+                            <div class="loc-left">
+                                <div class="loc-duration">1 - 5 Months</div>
+                                <div class="loc-desc">Flexible short-term stay. Great for internships or trial periods.</div>
+                            </div>
+                            <div class="loc-right">
+                                <div class="loc-price">PHP 3,600</div>
+                                <div class="loc-per">/ month</div>
+                            </div>
+                        </div>
+                        <div class="loc-bottom">
+                            <span class="loc-tag tag-short">Short Stay</span>
+                            <span class="loc-select-indicator">Select</span>
+                        </div>
+                    </div>
+
+                    <div class="lease-option-card" onclick="selectLease(1, this, 'standard')">
+                        <div class="loc-top">
+                            <div class="loc-left">
+                                <div class="loc-duration">6 - 11 Months</div>
+                                <div class="loc-desc">Best balance of flexibility and savings for semester stays.</div>
+                            </div>
+                            <div class="loc-right">
+                                <div class="loc-price">PHP 2,893</div>
+                                <div class="loc-per">/ month</div>
+                            </div>
+                        </div>
+                        <div class="loc-bottom">
+                            <span class="loc-tag tag-mid">Mid Term</span>
+                            <span class="loc-select-indicator">Select</span>
+                        </div>
+                    </div>
+
+                    <div class="lease-option-card highlighted" onclick="selectLease(2, this, 'standard')">
+                        <div class="loc-top">
+                            <div class="loc-left">
+                                <div class="loc-duration">1 Year</div>
+                                <div class="loc-desc">Lowest monthly rate. Ideal for full academic year residents.</div>
+                            </div>
+                            <div class="loc-right">
+                                <div class="loc-price">PHP 1,900</div>
+                                <div class="loc-per">/ month</div>
+                            </div>
+                        </div>
+                        <div class="loc-bottom">
+                            <span class="loc-tag tag-best">Best Value</span>
+                            <span class="loc-select-indicator">Select</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- PREMIUM lease cards (shown for Aircon Room) -->
+                <div class="lease-cards" id="leaseCardsPremium" style="display:none;">
+
+                    <div class="lease-option-card" onclick="selectLease(0, this, 'premium')">
+                        <div class="loc-top">
+                            <div class="loc-left">
+                                <div class="loc-duration">1 - 5 Months</div>
+                                <div class="loc-desc">Flexible short-term stay with full aircon comfort.</div>
+                            </div>
+                            <div class="loc-right">
+                                <div class="loc-price">PHP 5,075</div>
+                                <div class="loc-per">/ month</div>
+                            </div>
+                        </div>
+                        <div class="loc-bottom">
+                            <span class="loc-tag tag-short">Short Stay</span>
+                            <span class="loc-select-indicator">Select</span>
+                        </div>
+                    </div>
+
+                    <div class="lease-option-card" onclick="selectLease(1, this, 'premium')">
+                        <div class="loc-top">
+                            <div class="loc-left">
+                                <div class="loc-duration">6 - 11 Months</div>
+                                <div class="loc-desc">Save more with a longer commitment. Includes all amenities.</div>
+                            </div>
+                            <div class="loc-right">
+                                <div class="loc-price">PHP 4,095</div>
+                                <div class="loc-per">/ month</div>
+                            </div>
+                        </div>
+                        <div class="loc-bottom">
+                            <span class="loc-tag tag-mid">Mid Term</span>
+                            <span class="loc-select-indicator">Select</span>
+                        </div>
+                    </div>
+
+                    <div class="lease-option-card highlighted" onclick="selectLease(2, this, 'premium')">
+                        <div class="loc-top">
+                            <div class="loc-left">
+                                <div class="loc-duration">1 Year</div>
+                                <div class="loc-desc">Maximum savings. Full year of aircon comfort included.</div>
+                            </div>
+                            <div class="loc-right">
+                                <div class="loc-price">PHP 2,500</div>
+                                <div class="loc-per">/ month</div>
+                            </div>
+                        </div>
+                        <div class="loc-bottom">
+                            <span class="loc-tag tag-best">Best Value</span>
+                            <span class="loc-select-indicator">Select</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="lease-note">
+                     Longer lease terms come with lower monthly rates. You can discuss extensions with management.
+                </div>
+            </div>
+
+            <!--  STEP 2: BEDSPACE PICKER  -->
+            <div id="stepBed" style="display:none;">
+                <section class="movein-card modal-movein-card" id="moveInScheduleCard" style="display:none;">
+                    <div class="movein-card-header">
+                        <div>
+                            <h2>Move-in Date and Time</h2>
+                            <p>Choose a move-in schedule from Tuesday to Saturday, between 9:00 AM and 6:00 PM.</p>
+                        </div>
+                        <span class="movein-required">Required</span>
+                    </div>
+                    <div class="movein-grid">
+                        <div class="movein-field">
+                            <label for="preferredMoveInDate">Preferred Move-in Date</label>
+                            <input type="date" id="preferredMoveInDate" class="movein-input">
+                        </div>
+                        <div class="movein-field">
+                            <label for="preferredMoveInTime">Preferred Move-in Time</label>
+                            <input type="time" id="preferredMoveInTime" class="movein-input">
+                        </div>
+                    </div>
+                    <div class="movein-help" id="moveInHelpText">Please choose your preferred schedule before confirming this bedspace booking.</div>
+                </section>
+                <div id="roomsContainer"></div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            <div class="footer-left">
+                <button class="footer-back-btn" id="footerBackBtn" onclick="goBackToLease()" style="display:none;">&larr; Change Term</button>
+                <div class="footer-selected" id="footerSelected">Select a lease term to continue</div>
+            </div>
+            <!-- Step 1 footer: Next button -->
+            <button class="confirm-booking-btn ready" id="nextToBedsBtn" onclick="goToBeds()" style="display:none;">
+                Continue &rarr; Choose Bedspace
+            </button>
+            <!-- Step 2 footer: Confirm button -->
+            <button class="confirm-booking-btn" id="confirmBtn" onclick="confirmBooking()" style="display:none;">
+                Confirm Booking
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div id="successModal" class="modal-overlay" style="display:none;">
+    <div class="success-panel">
+        <div class="success-icon"></div>
+        <h2>Booking Submitted!</h2>
+        <p id="successText">Your request has been submitted. Fill out the form on the next page to complete your booking.</p>
+        <button class="success-back-btn" onclick="proceedToFillupPage()">Go to next step &rarr;</button>
+    </div>
+</div>
+   <script src="../js files/firebase-init.js"></script>
+<script src="../../shared/api-config.js"></script>
+<script src="../js files/booking.js"></script>
+
+</body>
+</html>

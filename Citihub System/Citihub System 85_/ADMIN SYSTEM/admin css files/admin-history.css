@@ -1,0 +1,207 @@
+.history-filter-bar {
+    align-items: end;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.history-export-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.history-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 240px;
+}
+
+.history-filter-label {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.history-filter-select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit;
+    min-height: 42px;
+    padding: 0 12px;
+}
+
+.history-filter-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(34, 168, 97, 0.14);
+    outline: none;
+}
+
+.history-filter-reset {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    min-height: 42px;
+    padding: 0 16px;
+}
+
+.history-filter-reset:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.history-filter-count {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: auto;
+    padding: 8px 12px;
+}
+
+.history-module-chip,
+.history-action-badge {
+    align-items: center;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 800;
+    gap: 6px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    padding: 7px 10px;
+    white-space: nowrap;
+}
+
+.history-module-chip::before,
+.history-action-badge::before {
+    border-radius: 999px;
+    content: "";
+    height: 7px;
+    width: 7px;
+}
+
+.history-module-chip.booking {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+.history-module-chip.booking::before { background: #3b82f6; }
+
+.history-module-chip.payment {
+    background: #f0fdf4;
+    color: #15803d;
+}
+.history-module-chip.payment::before { background: #22c55e; }
+
+.history-module-chip.room {
+    background: #fefce8;
+    color: #a16207;
+}
+.history-module-chip.room::before { background: #eab308; }
+
+.history-module-chip.complaint {
+    background: #fff1f2;
+    color: #be123c;
+}
+.history-module-chip.complaint::before { background: #f43f5e; }
+
+.history-module-chip.message {
+    background: #eef2ff;
+    color: #4338ca;
+}
+.history-module-chip.message::before { background: #6366f1; }
+
+.history-module-chip.system {
+    background: #f1f5f9;
+    color: #475569;
+}
+.history-module-chip.system::before { background: #64748b; }
+
+.history-action-badge.success {
+    background: #dcfce7;
+    color: #166534;
+}
+.history-action-badge.success::before { background: #16a34a; }
+
+.history-action-badge.danger {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+.history-action-badge.danger::before { background: #ef4444; }
+
+.history-action-badge.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+.history-action-badge.warning::before { background: #f59e0b; }
+
+.history-action-badge.info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+.history-action-badge.info::before { background: #3b82f6; }
+
+.history-action-badge.neutral {
+    background: #f1f5f9;
+    color: #475569;
+}
+.history-action-badge.neutral::before { background: #64748b; }
+
+.history-table td:nth-child(2),
+.history-table td:nth-child(3) {
+    white-space: nowrap;
+}
+
+.history-table td:nth-child(5) {
+    min-width: 260px;
+}
+
+.history-empty-note {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 22px;
+    text-align: center;
+}
+
+@media (max-width: 720px) {
+    .history-export-actions {
+        width: 100%;
+    }
+
+    .history-export-actions .download-btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .history-filter-bar {
+        align-items: stretch;
+    }
+
+    .history-filter-group,
+    .history-filter-reset,
+    .history-filter-count {
+        width: 100%;
+    }
+
+    .history-filter-count {
+        margin-left: 0;
+        justify-content: center;
+        text-align: center;
+    }
+}

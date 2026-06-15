@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js files/theme.js"></script>
+    <title>Settings  CITIHUB DORMITORY</title>
+    <link rel="stylesheet" href="../css files/settings.css">
+    <link rel="stylesheet" href="../css files/page-loader.css">
+    <link rel="icon" type="image/png" href="../images/logo.png">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../js files/page-loader.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <style>
+        .btn-loading {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0.85;
+            cursor: wait;
+        }
+
+        .btn-loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: btn-spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes btn-spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body data-loader-mode="manual">
+<div class="page-loading-overlay" id="pageLoadingOverlay">
+    <div class="page-loading-box">
+        <img src="../images/logo.png" alt="CitiHub Logo" class="page-loading-logo">
+        <div class="page-loading-spinner"></div>
+        <div class="page-loading-title">Preparing your settings</div>
+        <p class="page-loading-text">Please wait while we load your account preferences and security options.</p>
+    </div>
+</div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <img src="../images/logo.png" class="logo-icon" alt="CitiHub Logo">
+            <div class="logo-text">
+                <div class="name">CITIHUB DORMITORY</div>
+                <div class="address">&#128205; 1st St, Santa Mesa, Manila, Metro Manila</div>
+            </div>
+        </div>
+        <div class="header-right">
+        
+            <div class="user-info">
+                <div class="welcome" id="welcome-logger">Welcome, Lance Lumantas</div>
+                <div class="room" id="userRoomText">No room assigned yet</div>
+            </div>
+            <div class="avatar-container" id="avatarContainer">
+                <div class="avatar" id="avatarBtn">JS</div>
+                <div class="avatar-dropdown">
+                    <a href="../pages/payment.html" class="dropdown-item" data-action="payment">Payments</a>
+                    <a href="../pages/settings.html" class="dropdown-item active-item" data-action="settings">Settings</a>
+                    <a href="../pages/userprofile.html" class="dropdown-item" data-action="profile">Profile</a>
+                    <a href="intro.html" class="dropdown-item" id="btnLogout" data-action="logout">Log Out</a>
+                    <a href="../pages/main.html" class="dropdown-item" data-action="dashboard">Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+
+        <!-- BREADCRUMB -->
+        <div class="breadcrumb">
+            <a href="../pages/main.html" class="bc-link">&#127968; Home</a>
+            <span class="bc-sep">&rsaquo;</span>
+            <span class="bc-current">Settings</span>
+        </div>
+
+        <h1 class="section-title">Account Settings</h1>
+        <p class="section-sub">Manage your account security, display theme, booking cancellation, and room transfer requests.</p>
+
+        <div class="settings-layout">
+
+            <!-- SIDEBAR NAV -->
+            <aside class="settings-sidebar">
+                <nav class="settings-nav">
+                    <button class="nav-item active" data-tab="security">
+                        <span class="nav-icon">&#128274;</span> Password & Security
+                    </button>
+                    <button class="nav-item" data-tab="appearance">
+                        <span class="nav-icon">&#127912;</span> Appearance
+                    </button>
+                    <button class="nav-item" data-tab="booking">
+                        <span class="nav-icon">&#128197;</span> Booking Cancellation
+                    </button>
+                    <button class="nav-item" data-tab="transfer">
+                        <span class="nav-icon">&#8644;</span> Room Transfer
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- SETTINGS PANELS -->
+            <div class="settings-content">
+
+                <!-- PASSWORD & SECURITY -->
+                <section class="settings-panel active" id="tab-security">
+                    <div class="panel-header">
+                        <div class="panel-title">Password & Security</div>
+                        <div class="panel-sub">Keep your account safe with a strong password.</div>
+                    </div>
+
+                    <div class="info-banner green">
+                        &#128737;&#65039; Your account is protected. Last login: <strong id="lastLoginText">Loading...</strong>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label class="form-label">Current Password</label>
+                            <div class="input-eye-wrap">
+                                <input class="form-input" type="password" id="currentPass" placeholder="Enter current password">
+                                <button class="eye-btn" onclick="togglePass('currentPass', this)">Show</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Enter Email</label>
+                            <div class="input-eye-wrap">
+                                <input class="form-input" type="email" id="settings-change-pass" placeholder="juan@gmail.com" >
+                              
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-secondary" id="btn-clear">Clear</button>
+                        <button class="btn-primary" id="btn-update-password">&#128274; Update Password</button>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <div class="security-sessions-head">
+                        <div>
+                            <div class="panel-subtitle">Logged-in Devices</div>
+                            <div class="field-hint">Review where your CitiHub account is currently active.</div>
+                        </div>
+                        <button class="btn-danger-outline" type="button" id="signOutOtherDevicesBtn">Sign Out Other Devices</button>
+                    </div>
+                    <div class="session-list" id="sessionList">
+                        <div class="session-empty">Loading account sessions...</div>
+                    </div>
+                </section>
+
+                <!-- APPEARANCE -->
+                <section class="settings-panel" id="tab-appearance">
+                    <div class="panel-header">
+                        <div class="panel-title">Appearance</div>
+                        <div class="panel-sub">Customize the look and feel of your dashboard.</div>
+                    </div>
+
+                    <div class="panel-subtitle">Theme</div>
+                    <div class="theme-options">
+                        <label class="theme-card selected">
+                            <input type="radio" name="theme" value="light" checked>
+                            <div class="theme-preview light-preview">
+                                <div class="tp-bar"></div>
+                                <div class="tp-body"></div>
+                            </div>
+                            <div class="theme-name">&#9728;&#65039; Light</div>
+                        </label>
+                        <label class="theme-card">
+                            <input type="radio" name="theme" value="dark">
+                            <div class="theme-preview dark-preview">
+                                <div class="tp-bar dark"></div>
+                                <div class="tp-body dark"></div>
+                            </div>
+                            <div class="theme-name">&#127769; Dark</div>
+                        </label>
+                      
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-secondary" type="button" id="resetAppearanceBtn">Reset to Default</button>
+                        <button class="btn-primary" type="button" id="applyAppearanceBtn">&#128190; Apply</button>
+                    </div>
+                </section>
+
+                <!-- ROOM TRANSFER -->
+                <section class="settings-panel" id="tab-transfer">
+                    <div class="panel-header">
+                        <div class="panel-title">Room Transfer Request</div>
+                        <div class="panel-sub">Request to move to another available bedspace. Admin approval and transfer fee payment are required before the move is completed.</div>
+                    </div>
+
+                    <div class="info-banner green" id="transferStatusBanner">
+                        &#8644; Your current room and transfer eligibility will appear here.
+                    </div>
+
+                    <div class="transfer-summary-grid">
+                        <div class="transfer-info-card">
+                            <div class="transfer-label">Current Assignment</div>
+                            <div class="transfer-value" id="transferCurrentAssignment">Loading...</div>
+                        </div>
+                        <div class="transfer-info-card">
+                            <div class="transfer-label">Calculated Fee</div>
+                            <div class="transfer-value" id="transferFeePreview">Select a target bed</div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label class="form-label" for="transferTargetBed">Target Bedspace</label>
+                            <select class="form-input transfer-hidden-select" id="transferTargetBed" aria-hidden="true" tabindex="-1">
+                                <option value="">Loading available bedspaces...</option>
+                            </select>
+                            <div class="transfer-type-filter" id="transferTypeFilter" aria-label="Filter target bedspaces by room type">
+                                <button class="transfer-type-btn active" type="button" data-transfer-type="all">All</button>
+                                <button class="transfer-type-btn" type="button" data-transfer-type="standard">Standard</button>
+                                <button class="transfer-type-btn" type="button" data-transfer-type="premium">Premium</button>
+                            </div>
+                            <div class="transfer-rooms-container" id="transferRoomsContainer">
+                                <div class="transfer-empty-state">Loading available bedspaces...</div>
+                            </div>
+                            <div class="field-hint">Downgrades are not allowed. Same room type transfers cost PHP 200.</div>
+                            <button class="btn-outline transfer-payment-link" type="button" id="goToTransferPaymentBtn" style="display:none;">Go to Payment</button>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="transferPaymentMethod">Payment Method</label>
+                            <select class="form-input" id="transferPaymentMethod">
+                                <option value="gcash">GCash</option>
+                                <option value="maya">Maya</option>
+                                <option value="card">Card</option>
+                                <option value="grab_pay">GrabPay</option>
+                                <option value="qrph">QR PH</option>
+                                <option value="online_banking">Online Banking</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-input-wrap">
+                        <label class="form-label" for="transferReason">Reason for transfer</label>
+                        <textarea class="form-textarea" id="transferReason" rows="4" maxlength="260" placeholder="Optional: tell the admin why you want to transfer."></textarea>
+                    </div>
+
+                    <div class="transfer-status-card" id="transferRequestStatus">
+                        No active transfer request.
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-secondary" type="button" id="refreshTransferBtn">Refresh</button>
+                        <button class="btn-primary" type="button" id="submitTransferRequestBtn">Submit Transfer Request</button>
+                        <button class="btn-primary" type="button" id="payTransferFeeBtn" style="display:none;">Pay Transfer Fee</button>
+                    </div>
+                </section>
+
+                <!-- BOOKING CANCELLATION -->
+                <section class="settings-panel" id="tab-booking">
+                    <div class="panel-header">
+                        <div class="panel-title">Booking Cancellation</div>
+                        <div class="panel-sub">If you no longer wish to continue with CitiHub, you may cancel your active booking request here.</div>
+                    </div>
+
+                    <div class="info-banner green" id="bookingCancelInfoBanner">
+                        &#128197; Your latest active booking details will appear here if a pending or approved request is found.
+                    </div>
+
+                    <div class="danger-card" id="cancelBookingCard">
+                        <div class="danger-card-left">
+                            <div class="danger-card-title">Active Booking Status</div>
+                            <div class="danger-card-desc" id="cancelBookingSummary">Checking your latest booking request...</div>
+                        </div>
+                        <button class="btn-danger-outline" type="button" id="openCancelBookingBtn" disabled>&#10060; Cancel Booking</button>
+                    </div>
+
+                    <div class="cancel-booking-meta" id="cancelBookingMeta"></div>
+
+                    <div class="modal-input-wrap cancel-booking-reason-wrap">
+                        <label class="form-label" for="cancelBookingReason">Reason for cancellation</label>
+                        <textarea class="form-textarea" id="cancelBookingReason" rows="5" maxlength="260" placeholder="Please briefly tell CitiHub management why you want to cancel this booking."></textarea>
+                        <div class="field-hint">This reason will be saved in your booking record and shown to the admin team.</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <div id="cancelBookingModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-icon">&#9888;&#65039;</div>
+            <h2 class="modal-title">Cancel Booking Request?</h2>
+            <p class="modal-desc" id="cancelBookingModalDesc">This will cancel your latest active CitiHub booking request and notify the admin team.</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" type="button" id="cancelBookingModalClose">Keep Booking</button>
+                <button class="btn-danger" type="button" id="confirmCancelBookingBtn">&#10060; Confirm Cancellation</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="transferConfirmModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box transfer-confirm-modal">
+            <div class="modal-icon">&#8644;</div>
+            <h2 class="modal-title">Confirm Transfer Request</h2>
+            <p class="modal-desc" id="transferConfirmDesc">Review how this transfer changes your future unpaid billing before sending the request.</p>
+            <div class="transfer-confirm-summary" id="transferConfirmSummary"></div>
+            <div class="transfer-confirm-table-wrap">
+                <table class="transfer-confirm-table">
+                    <thead>
+                        <tr>
+                            <th>Billing Month</th>
+                            <th>Current Invoice</th>
+                            <th>After Transfer</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transferConfirmTableBody">
+                        <tr><td colspan="3">Loading comparison...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" type="button" id="transferConfirmClose">Keep Current Room</button>
+                <button class="btn-primary" type="button" id="confirmTransferRequestBtn">Send Transfer Request</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="signOutDevicesModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-icon">&#128274;</div>
+            <h2 class="modal-title">Sign Out Other Devices?</h2>
+            <p class="modal-desc">For your account security, this will sign out your CitiHub account from all other recorded devices. You will remain signed in on this device.</p>
+            <div class="modal-actions">
+                <button class="btn-secondary" type="button" id="signOutDevicesCancel">Cancel</button>
+                <button class="btn-danger" type="button" id="signOutDevicesConfirm">Sign Out Other Devices</button>
+            </div>
+        </div>
+    </div>
+    <script src="../../shared/api-config.js"></script>
+    <script src="../js files/firebase-init.js"></script>
+   <script src="../js files/settings.js"></script>
+
+</body>
+</html>
+

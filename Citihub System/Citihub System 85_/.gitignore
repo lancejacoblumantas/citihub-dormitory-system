@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Local environment secrets
+.env
+*.env
+server/.env
+
+# Firebase service account keys
+*firebase-adminsdk*.json
+*serviceAccount*.json
+server/*firebase-adminsdk*.json
+
+# Editor/cache files
+.vscode/
+.vs/
+**/.vscode/
+**/.vs/
+
+# Generated local artifacts
+CITIHUB_ERD_IMAGE.html
