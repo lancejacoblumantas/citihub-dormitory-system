@@ -20,7 +20,7 @@ const storage = typeof firebase.storage === "function" ? firebase.storage() : nu
 try {
     if (typeof firebase.appCheck === "function") {
         const appCheck = firebase.appCheck();
-        appCheck.activate("6Ldne6YsAAAAAPEqPQPI46YYtKyASrCRfcHqZ_wR", true);
+        appCheck.activate("6Ldne6YsAAAAACXAl4DZZdSExxfJNzCkHso9Szw8", true);
     }
 } catch (error) {
     console.warn("Firebase App Check could not be activated for admin pages:", error);
